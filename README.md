@@ -1,3 +1,3 @@
-# concurrency
+# Desolate
 
-A description of this package.
+*Prototype* actor and async/await toolkit for Swift 5.5+
