@@ -1,7 +1,7 @@
 import XCTest
 import class Foundation.Bundle
 import Foundation
-import Conduits
+import Desolate
 
 final class BridgeTest: XCTestCase {
     func testBridge() throws {
