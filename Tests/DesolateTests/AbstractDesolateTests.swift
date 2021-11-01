@@ -27,7 +27,7 @@ final class AbstractDesolateTests: XCTestCase {
     }
 
     func testTellOrdered() throws {
-        try it("Abstract should maintain the order of message when using tell") { e in
+        try unit("AbstractDesolate should maintain the order of message when using tell") { e in
             let desolate = Desolate(of: Logger.init())
             for i in 0...3 {
                 desolate.tell(with: i)
@@ -37,9 +37,17 @@ final class AbstractDesolateTests: XCTestCase {
 
     }
 
+    func testTaskUntilFinishes() async throws {
+        try await unit("AbstractDesolate should be able to wait for finished execution using Task") { e async in
+            let desolate = Desolate(of: Logger.init())
+            await desolate.task(with: 2)
+            e.fulfill()
+        }
+    }
+
     func testConduit() throws {
         func asyncCode() async -> Int { 1 }
-        try it("Conduit should not create data race and allow bridging the async value to the sync block") { e in
+        try unit("Conduit should not create data race and allow bridging the async value to the sync block") { e in
             let res = conduit(timeout: 1.0) {
                 await asyncCode()
             }
