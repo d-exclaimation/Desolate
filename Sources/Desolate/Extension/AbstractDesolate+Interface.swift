@@ -1,30 +1,14 @@
 //
-//  AbstractBehavior.swift
+//  AbstractDesolate+Interface.swift
 //  Desolate
 //
-//  Created by d-exclaimation on 5:56 PM.
+//  Created by d-exclaimation on 11:40 AM.
 //  Copyright © 2021 d-exclaimation. All rights reserved.
 //
 
 import Foundation
 
-/// Abstract Behavior for an Actor
-public protocol AbstractBehavior: Actor {
-    /// Associated type for the messages
-    associatedtype MessageType
-
-    /// Status of an Behavior
-    var status: BehaviorSignal { get set }
-
-    /// Receive messages with `at-most-once` basis and ordered guarantee and perform defined action
-    ///
-    /// - Parameter msg: Message received
-    /// - Returns: A Behavior signal to let the Behavior handle the Actor at the current state
-    func onMessage(msg: MessageType) async -> BehaviorSignal
-}
-
-
-extension AbstractBehavior {
+extension AbstractDesolate {
     /// Receiver function for handling the current state for the behavior
     ///
     /// - Parameter msg: Given message
@@ -49,5 +33,4 @@ extension AbstractBehavior {
         let res = await task.result
         await receive(mapTo(res))
     }
-
 }

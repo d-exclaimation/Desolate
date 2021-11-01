@@ -5,10 +5,9 @@
 //  Created by d-exclaimation on 6:01 PM.
 //  Copyright © 2021 d-exclaimation. All rights reserved.
 //
-
 import Foundation
 
-/// Behavior Signal indicate how operational an Behavior
+/// Signal indicate how operational an Actor
 ///
 /// ```
 /// enum CounterActions {
@@ -37,7 +36,7 @@ import Foundation
 ///     }
 /// }
 /// ```
-public enum BehaviorSignal {
+public enum Signal: Equatable {
     /// Signal that behavior is still running
     case running
 
