@@ -20,12 +20,15 @@ public typealias AsyncFailable<ReturnType> = () async throws -> ReturnType
 ///   - dur: Timeout duration.
 ///   - operation: Asynchronous function that return the proper value
 /// - Returns: Result of the Successful value or a BridgeError
-public func conduit<Success>(timeout dur: DispatchTime, for operation: @escaping Async<Success>) -> Result<Success, CollapsedBridge> {
+public func conduit<Success>(timeout dur: TimeInterval, for operation: @escaping Async<Success>) -> Result<Success, CollapsedBridge> {
+    let lock = NSConditionLock(condition: 0)
     var result: Result<Success, CollapsedBridge> = .failure(.idle)
 
     func closure() async {
+        lock.lock(whenCondition: 0)
         let res = await operation()
         result = .success(res)
+        lock.unlock(withCondition: 0)
     }
 
     switch bridge(timeout: dur, for: closure) {
@@ -42,10 +45,12 @@ public func conduit<Success>(timeout dur: DispatchTime, for operation: @escaping
 ///   - dur: Timeout duration.
 ///   - operation: Asynchronous function that return another Result
 /// - Returns: Flatten Result with transformed error
-public func conduit<Success, Failure: Error>(timeout dur: DispatchTime, under operation: @escaping Async<Result<Success, Failure>>) -> Result<Success, CollapsedBridge> {
+public func conduit<Success, Failure: Error>(timeout dur: TimeInterval, under operation: @escaping Async<Result<Success, Failure>>) -> Result<Success, CollapsedBridge> {
+    let lock = NSConditionLock(condition: 0)
     var result: Result<Success, CollapsedBridge> = .failure(.idle)
 
     func closure() async {
+        lock.lock(whenCondition: 0)
         switch await operation() {
         case .success(let res):
             result = .success(res)
@@ -54,6 +59,7 @@ public func conduit<Success, Failure: Error>(timeout dur: DispatchTime, under op
             result = .failure(.failure(error: error))
             break
         }
+        lock.unlock(withCondition: 0)
     }
 
     switch bridge(timeout: dur, for: closure) {
@@ -70,16 +76,19 @@ public func conduit<Success, Failure: Error>(timeout dur: DispatchTime, under op
 ///   - dur: Timeout duration.
 ///   - operation: Asynchronous function that return the proper value or throw error
 /// - Returns: Result of the Successful value or a BridgeError
-public func conduit<Success>(timeout dur: DispatchTime, for operation: @escaping AsyncFailable<Success>) -> Result<Success, CollapsedBridge> {
+public func conduit<Success>(timeout dur: TimeInterval, for operation: @escaping AsyncFailable<Success>) -> Result<Success, CollapsedBridge> {
+    let lock = NSConditionLock(condition: 0)
     var result: Result<Success, CollapsedBridge> = .failure(.idle)
 
     func closure() async throws {
+        lock.lock(whenCondition: 0)
         do {
             let res = try await operation()
             result = .success(res)
         } catch {
             result = .failure(.failure(error: error))
         }
+        lock.unlock(withCondition: 0)
     }
 
     switch bridge(timeout: dur, throw: closure) {

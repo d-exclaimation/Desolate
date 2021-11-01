@@ -24,7 +24,7 @@ extension Desolate {
         let inbox = Inbox<ReturnType>()
         let recipient = Desolate<Inbox<ReturnType>>(of: inbox)
         await task(with: fn(recipient))
-        return try await inbox.get()
+        return try await inbox.get(timeout: timeout)
     }
 
     /// The ask-pattern implements the initiator side of request–reply protocol.

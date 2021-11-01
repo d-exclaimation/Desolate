@@ -73,14 +73,14 @@ public func bridge(throw operation: @escaping AsyncThrowFunction) {
 /// ```
 ///
 /// - Parameter operation: Asynchronous function closure.
-public func bridge(timeout: DispatchTime, for operation: @escaping AsyncFunction) -> Result<Void, CollapsedBridge> {
+public func bridge(timeout: TimeInterval, for operation: @escaping AsyncFunction) -> Result<Void, CollapsedBridge> {
     let group = DispatchGroup()
     group.enter()
     Task {
         await operation()
         group.leave()
     }
-    let res = group.wait(timeout: timeout)
+    let res = group.wait(timeout: DispatchTime.now() + timeout)
     switch res {
     case .success:
         return .success(())
@@ -104,14 +104,14 @@ public func bridge(timeout: DispatchTime, for operation: @escaping AsyncFunction
 /// ```
 ///
 /// - Parameter operation: Asynchronous function closure.
-public func bridge(timeout: DispatchTime, throw operation: @escaping AsyncThrowFunction) -> Result<Void, CollapsedBridge> {
+public func bridge(timeout: TimeInterval, throw operation: @escaping AsyncThrowFunction) -> Result<Void, CollapsedBridge> {
     let group = DispatchGroup()
     group.enter()
     Task.init(priority: nil) {
         try await operation()
         group.leave()
     }
-    let res = group.wait(timeout: timeout)
+    let res = group.wait(timeout: DispatchTime.now() + timeout)
     switch res {
     case .success:
         return .success(())
@@ -134,14 +134,14 @@ public func bridge(timeout: DispatchTime, throw operation: @escaping AsyncThrowF
 /// ```
 ///
 /// - Parameter operation: Asynchronous function closure.
-public func bridge(priority: TaskPriority?, timeout: DispatchTime, throw operation: @escaping AsyncThrowFunction) -> Result<Void, CollapsedBridge> {
+public func bridge(priority: TaskPriority?, timeout: TimeInterval, throw operation: @escaping AsyncThrowFunction) -> Result<Void, CollapsedBridge> {
     let group = DispatchGroup()
     group.enter()
     Task.init(priority: priority) {
         try await operation()
         group.leave()
     }
-    let res = group.wait(timeout: timeout)
+    let res = group.wait(timeout: DispatchTime.now() + timeout)
     switch res {
     case .success:
         return .success(())

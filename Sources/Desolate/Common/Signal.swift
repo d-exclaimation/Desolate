@@ -1,5 +1,5 @@
 //
-//  BehaviorSignal.swift
+//  desolated actorSignal.swift
 //  Desolate
 //
 //  Created by d-exclaimation on 6:01 PM.
@@ -12,14 +12,13 @@ import Foundation
 /// ```
 /// enum CounterActions {
 ///     case increment, decrement, stop
-///     case get(ref: RecipientRef<Int>)
+///     case get(ref: Recipient<Int>)
 /// }
-/// actor Counter: AbstractBehavior {
-///     typealias MessageType = CounterActions
-///
+/// actor Counter: AbstractDesolate actor {
+///     var status: Signal = .running
 ///     var state: Int = 0
 ///
-///     func onMessage(msg: MessageType) async -> BehaviorSignal {
+///     func onMessage(msg: CounterActions) async -> Signal {
 ///         switch msg {
 ///         case .increment:
 ///             state += 1
@@ -37,13 +36,13 @@ import Foundation
 /// }
 /// ```
 public enum Signal: Equatable {
-    /// Signal that behavior is still running
+    /// Signal that desolated actor is still running
     case running
 
-    /// Signal that behavior is going to ignore the next `count` messages
+    /// Signal that desolated actor is going to ignore the next `count` messages
     case ignoring(count: Int)
 
-    /// Signal that behavior has stopped
+    /// Signal that desolated actor has stopped
     case stopped
 
     /// Toggle the signal from `.running` to `.stopped` and vice-versa

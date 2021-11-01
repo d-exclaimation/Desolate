@@ -1,5 +1,5 @@
 //
-//  Task+Conduit.swift
+//  Task+Bridge.swift
 //  Desolate
 //
 //  Created by d-exclaimation on 4:45 PM.
@@ -14,8 +14,8 @@ extension Task {
     /// - Parameters:
     ///   - priority: TaskPriority used for the Task
     ///   - timeout: Timeout for waiting the result
-    /// - Returns: A Result for Task's Success and BridgeError
-    func wait(priority: TaskPriority? = nil, timeout: DispatchTime = DispatchTime.now() + DispatchTimeInterval.seconds(5)) -> Result<Success, CollapsedBridge> {
+    /// - Returns: A Result for Task's Success and CollapsedBridge error
+    func wait(priority: TaskPriority? = nil, timeout: TimeInterval = 5.0) -> Result<Success, CollapsedBridge> {
         var result: Result<Success, CollapsedBridge> = .failure(.idle)
 
         func closure() async throws {
