@@ -40,9 +40,7 @@ final class DesolateTests: XCTestCase {
     func testTell() throws {
         try it("Desolate should be able to receive responses from a synchronous input", timeout: 1.0) { e in
             let desolate = Desolate(of: Probe())
-
             desolate.tell(with: .unidirectional(content: "Hello"))
-
             e.fulfill()
         }
     }
