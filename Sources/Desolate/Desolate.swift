@@ -72,7 +72,6 @@ import Foundation
 public struct Desolate<ActorType> where ActorType: AbstractDesolate  {
     /// inner actors of the reference
     internal var innerActor: ActorType
-    internal var mailbox: DispatchQueue = DispatchQueue(label: "desolate-mailbox-\(UUID().uuidString)")
 
     public init(of ref: ActorType) {
         innerActor = ref

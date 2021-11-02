@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// Inbox type Actor for one-time or one value in memory storage / cache
+/// Inbox for one-time or one value in memory storage / cache
 public class Inbox<MessageType>: Receiver<MessageType> {
     /// Private internal state
     private var cache: MessageType? = nil
