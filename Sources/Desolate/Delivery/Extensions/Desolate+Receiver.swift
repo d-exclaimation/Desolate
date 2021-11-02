@@ -9,7 +9,7 @@
 import Foundation
 
 extension Desolate {
-    // TODO: Add comment
+    /// Get the receiver from this Desolate
     var ref: Receiver<ActorType.MessageType> {
         DesolateReceiver(of: innerActor)
     }

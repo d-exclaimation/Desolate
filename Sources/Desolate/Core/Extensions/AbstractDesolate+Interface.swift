@@ -46,8 +46,11 @@ extension AbstractDesolate {
         await receive(mapTo(res))
     }
 
-    // TODO: Add comment
-    public var dsl: Desolate<Self> {
+    /// The identity of this Actor, bound to the lifecycle of this Actor instance.
+    /// An Actor with the same name that lives before or after this instance will have a different Desolate.
+    ///
+    /// This field is thread-safe and can be called from other threads than the ordinary actor message processing thread, such as `async` or `Task` callbacks.
+    public var oneself: Desolate<Self> {
         Desolate(of: self)
     }
 }

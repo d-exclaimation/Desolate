@@ -7,17 +7,15 @@ final class DesolateTests: XCTestCase {
         case unidirectional(content: String)
     }
 
-    actor Probe: AbstractDesolate {
-        var status: Signal = .running
-
-        func onMessage(msg: ProbeAction) async -> Signal {
+    actor Probe: AbstractDesolate, BaseActor, NonStop {
+        func onMessage(msg: ProbeAction) async -> Signal  {
             switch msg {
             case .bidirectional(let content, let ref):
                 ref.tell(with: content)
             case .unidirectional(_):
                 break
             }
-            return .running
+            return same
         }
     }
 
@@ -39,7 +37,7 @@ final class DesolateTests: XCTestCase {
 
     func testTell() throws {
         try unit("Desolate should be able to receive responses from a synchronous input", timeout: 1.0) { e in
-            let desolate = Desolate(of: Probe())
+            let desolate = Probe.new()
             desolate.tell(with: .unidirectional(content: "Hello"))
             e.fulfill()
         }
@@ -47,7 +45,7 @@ final class DesolateTests: XCTestCase {
 
     func testAsk() async throws {
         try await unit("Desolate when conforming to Delivery should be able to receive responses", timeout: 5.0) { e in
-            let desolate = Desolate(of: Probe())
+            let desolate = Probe.new()
 
             let response = try await desolate.ask { .bidirectional(content: "Hello", ref: $0) }
 

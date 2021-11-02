@@ -9,7 +9,7 @@
 import Foundation
 
 extension AbstractDesolate {
-    // TODO: Add comment
+    /// Get a Receiver from a AbstractDesolate
     var ref: Receiver<MessageType> {
         DesolateReceiver(of: self)
     }
