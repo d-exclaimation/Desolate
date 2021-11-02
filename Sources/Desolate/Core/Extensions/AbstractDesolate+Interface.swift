@@ -29,8 +29,25 @@ extension AbstractDesolate {
     /// - Parameters:
     ///   - task: Task being executed / awaited
     ///   - mapTo: Mapping function to transform result into the behavior message type
+    public func pipeToSelf<Success, Failure>(_ task: Task<Success, Failure>, into: @escaping (Result<Success, Failure>) -> MessageType) {
+        Task {
+            let res = await task.result
+            await receive(into(res))
+        }
+    }
+
+    /// Method for handling Task within a Behavior `onMessage` using the `pipe pattern`
+    ///
+    /// - Parameters:
+    ///   - task: Task being executed / awaited
+    ///   - mapTo: Mapping function to transform result into the behavior message type
     public func pipeToSelf<Success, Failure>(_ task: Task<Success, Failure>, mapTo: (Result<Success, Failure>) -> MessageType) async {
         let res = await task.result
         await receive(mapTo(res))
+    }
+
+    // TODO: Add comment
+    public var dsl: Desolate<Self> {
+        Desolate(of: self)
     }
 }

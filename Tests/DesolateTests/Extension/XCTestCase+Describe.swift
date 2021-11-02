@@ -14,14 +14,14 @@ extension XCTestCase {
 
     /// A Unit of test scope
     func unit(_ desc: String, timeout: TimeInterval = 5.0, code block: @escaping Block) throws {
-        let expectation = XCTestExpectation(description: "Desolate when conforming to AskPattern should be able to receive responses")
+        let expectation = XCTestExpectation(description: desc)
         try block(expectation)
         wait(for: [expectation], timeout: timeout)
     }
 
     /// A Unit of test asynchronous scope
     func unit(_ desc: String, timeout: TimeInterval = 5.0, async block: @escaping ABlock) async throws {
-        let expectation = XCTestExpectation(description: "Desolate when conforming to AskPattern should be able to receive responses")
+        let expectation = XCTestExpectation(description: desc)
         try await block(expectation)
         wait(for: [expectation], timeout: timeout)
     }

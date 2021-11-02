@@ -1,5 +1,5 @@
 //
-//  Desolate+AskPattern.swift
+//  Desolate+Delivery.swift
 //  Desolate
 //
 //  Created by d-exclaimation on 12:26 PM.
@@ -19,11 +19,10 @@ extension Desolate {
     /// - Throws: A timeout error from the Inbox
     func ask<ReturnType>(
         timeout: TimeInterval = 5.0,
-        with fn: @escaping (Recipient<ReturnType>) -> ActorType.MessageType
+        with fn: @escaping (Receiver<ReturnType>) -> ActorType.MessageType
     ) async throws -> ReturnType {
         let inbox = Inbox<ReturnType>()
-        let recipient = Desolate<Inbox<ReturnType>>(of: inbox)
-        await task(with: fn(recipient))
+        await task(with: fn(inbox.ref))
         return try await inbox.get(timeout: timeout)
     }
 
@@ -36,7 +35,7 @@ extension Desolate {
     /// - Throws: A timeout error from the Inbox
     func request<ReturnType>(
         timeout: TimeInterval = 5.0,
-        with fn: @escaping (Recipient<ReturnType>) -> ActorType.MessageType
+        with fn: @escaping (Receiver<ReturnType>) -> ActorType.MessageType
     ) -> Task<ReturnType, Error> {
         Task { try await ask(timeout: timeout, with: fn) }
     }
@@ -52,7 +51,7 @@ extension Desolate {
     func request<ReturnType>(
         timeout: TimeInterval = 5.0,
         priority: TaskPriority?,
-        with fn: @escaping (Recipient<ReturnType>) -> ActorType.MessageType
+        with fn: @escaping (Receiver<ReturnType>) -> ActorType.MessageType
     ) -> Task<ReturnType, Error> {
         Task.init(priority: priority) { try await ask(timeout: timeout, with: fn) }
     }

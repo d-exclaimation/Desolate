@@ -4,9 +4,6 @@
 
 import Foundation
 
-/// Recipient
-public typealias Recipient<ReturnType> = Desolate<Inbox<ReturnType>>
-
 /// Inbox type Actor for one-time or one value in memory storage / cache
 public actor Inbox<MessageType>: AbstractDesolate, Identifiable {
     /// Status of the inbox

@@ -3,7 +3,7 @@ import XCTest
 
 final class DesolateTests: XCTestCase {
     enum ProbeAction {
-        case bidirectional(content: String, ref: Recipient<String>)
+        case bidirectional(content: String, ref: Receiver<String>)
         case unidirectional(content: String)
     }
 
@@ -46,7 +46,7 @@ final class DesolateTests: XCTestCase {
     }
 
     func testAsk() async throws {
-        try await unit("Desolate when conforming to AskPattern should be able to receive responses", timeout: 5.0) { e in
+        try await unit("Desolate when conforming to Delivery should be able to receive responses", timeout: 5.0) { e in
             let desolate = Desolate(of: Probe())
 
             let response = try await desolate.ask { .bidirectional(content: "Hello", ref: $0) }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// AskPattern Custom Error type
+/// Delivery Custom Error type
 /// that specify the timeout duration and error message
 public struct AskPatternError: Error {
     /// Timeout duration / interval
@@ -17,7 +17,7 @@ public struct AskPatternError: Error {
     /// Localized description for the error message
     var localizedDescription: String {
         NSError(
-           domain: "Desolate.AskPattern",
+           domain: "Desolate.Delivery",
            code: 200,
            userInfo: [
                "Error reason": "Ask pattern timeout",
