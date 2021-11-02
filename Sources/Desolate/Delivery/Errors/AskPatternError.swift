@@ -10,7 +10,7 @@ import Foundation
 
 /// Delivery Custom Error type
 /// that specify the timeout duration and error message
-public struct AskPatternError: Error {
+@frozen public struct AskPatternError: Error {
     /// Timeout duration / interval
     var timeout: TimeInterval
 

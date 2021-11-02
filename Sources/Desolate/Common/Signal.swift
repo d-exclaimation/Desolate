@@ -35,7 +35,7 @@ import Foundation
 ///     }
 /// }
 /// ```
-public enum Signal: Equatable {
+@frozen public enum Signal: Equatable {
     /// Signal that desolated actor is still running
     case running
 

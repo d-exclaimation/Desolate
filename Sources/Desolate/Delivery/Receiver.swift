@@ -8,8 +8,34 @@
 
 import Foundation
 
-/// Receiver class is any class that can given a value of a certain type with similar API to a Desolate,
-/// usually used for a request-response within Desolate
+///
+// A diagram showing receiver pattern how perform returning values with callbacks between actors:
+// ┌───────────────────────────────────────────────────────────────────────────────────────────────────────┐
+// │  Synchronous block                                                                                    │
+// │                                                      5. Actor respond with a "message" using receiver │
+// │                6. Receiver       ┌───────────────────────────────────────────────────────────┐        │
+// │                   give back      ▼                                                           │        │
+// │                   to actor ┌──────────┐                                                      │        │
+// │   ┌───────────────────┐ ┌──┤ Receiver │ ──────┐ 3. Give receiver     ┌───────────────────────┼───┐    │
+// │   │                   │ │  └──────────┘       │    as "message"      │                       │   │    │
+// │   │  ....  ◄─┐        │ │     ▲ 2. Receiver   │    to Desolate       │   Isolation (async)   │   │    │
+// │   │          │  ┌─────┼─┘     │    made       │  ┌───────────┐       │                       │   │    │
+// │   │   │      │  │     │       │               ▼  │           ▼       │                       │   │    │
+// │   │   │    ┌─┴──┴─────┼───────┴──┐      ┌────────┴─┐      ┌──────────┼──────────┐            │   │    │
+// │   │   │    │          │          │      │          │      │          │          │                │    │
+// │   │   └───►│  Actor2    Desolate │      │  Input   │      │ Desolate    Actor1  ├───────►  ....  │    │
+// │   │        │          │          │      │          │      │          │          │                │    │
+// │   │        └──────────┼──────────┘      └────┬─────┘      └──────────┼──────────┘ 4. Isolated    │    │
+// │   │                   │    ▲                 │                       │               process     │    │
+// │   │                   │    │                 │                       │                           │    │
+// │   │ Isolation (async) │    └─────────────────┘                       │                           │    │
+// │   │                   │   1. Input ask for .ref                      │                           │    │
+// │   └───────────────────┘                                              └───────────────────────────┘    │
+// │                                                                                                       │
+// └───────────────────────────────────────────────────────────────────────────────────────────────────────┘
+///
+
+/// Receiver class is any class that can given a value of a certain type with similar API to a Desolate, usually used for a request-response within Desolate used in something like `AskPattern` with `.ask`.
 ///
 /// - Note: Receiver should not and aren't allowed to be instantiated on own its own.
 /// - Attention: To make a Receiver, you are required to create a class that inherits and override all the methods
@@ -49,12 +75,12 @@ public class Receiver<ReceivedType> {
     /// Send a response message to the Actor referenced by this Receiver
     ///
     /// - Parameter msg: Message to be sent
-    public func tell(with msg: ReceivedType) { fatalError() }
+    public func tell(with msg: ReceivedType) { fatalError("Receiver was never given a value") }
 
     /// Asynchronously send a response message to the Actor referenced by this Receiver.
     ///
     /// - Parameter msg: Message to be sent:
-    public func task(with msg: ReceivedType) async { fatalError() }
+    public func task(with msg: ReceivedType) async { fatalError("Receiver was never given a value") }
 }
 
 /// Receiver Wrapper for Desolate

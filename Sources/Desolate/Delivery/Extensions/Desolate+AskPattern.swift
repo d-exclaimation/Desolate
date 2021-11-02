@@ -22,8 +22,24 @@ extension Desolate {
         with fn: @escaping (Receiver<ReturnType>) -> ActorType.MessageType
     ) async throws -> ReturnType {
         let inbox = Inbox<ReturnType>()
-        await task(with: fn(inbox.ref))
+        await task(with: fn(inbox))
         return try await inbox.get(timeout: timeout)
+    }
+
+    /// The ask-pattern implements the initiator side of an asynchronous request–reply protocol.
+    ///
+    /// - Parameters:
+    ///   - timeout: Timeout for the ask pattern
+    ///   - fn: Function to return a Message that accepts a RecipientRef
+    /// - Returns: The return type for the accepted RecipientRef from `fn`
+    /// - Throws: A timeout error from the Inbox
+    func query<ReturnType>(
+        timeout: TimeInterval = 5.0,
+        using fn: @escaping (Receiver<ReturnType>) -> ActorType.MessageType
+    ) async -> Result<ReturnType, Error> {
+        let inbox = Inbox<ReturnType>()
+        await task(with: fn(inbox))
+        return await Task { try await inbox.get(timeout: timeout) }.result
     }
 
     /// The ask-pattern implements the initiator side of request–reply protocol.

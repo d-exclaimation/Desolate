@@ -8,6 +8,37 @@
 
 import Foundation
 
+///
+// A diagram describing the Timer actor on how it handled timeout and intervals
+//
+// *: Do note that the Desolate to Timer actor communication is simplified in the diagram,
+// and a more in depth diagram for the desolate itself can be seen in `Desolate.swift`
+//
+//  Timer handle user input and Task diagram:
+// ┌────────────────────────────────────────────────────────────────┐
+// │     ┌────────────────────────────────────────────────────────┐ │
+// │     │         callback                                       │ │
+// │     │                     ┌──────────────────────────────┐   │ │
+// │     │                     │ Async block                  │   │ │
+// │     │                     │                              │   │ │
+// │     │                     │    timeout/interval/cancel   │   │ │
+// │     │                     │      ┌────────────────┐      │   │ │
+// │     ▼                     │      │                ▼      │   │ │
+// │ ┌───────┐      ┌──────────┼──────┴──┐         ┌────────┐ │   │ │
+// │ │       ├─────►│          │         │         │        │ │   │ │
+// │ │ Input │      │ Desolate    Timer  │         │  Task  ├─┼───┘ │
+// │ │       ├─────►│          │         │         │        │ │     │
+// │ └───────┘      └──────────┼─────────┘         └────┬───┘ │     │
+// │                           │      ▲                 │     │     │
+// │                           │      │                 │     │     │
+// │                           │      └─────────────────┘     │     │
+// │                           │           interval           │     │
+// │                           │                              │     │
+// │                           │                              │     │
+// │  Synchronous block        └──────────────────────────────┘     │
+// └────────────────────────────────────────────────────────────────┘
+///
+
 /// A Unsigned integer for nanoseconds
 public typealias Nanoseconds = UInt64
 
@@ -77,14 +108,14 @@ public actor Timer: AbstractDesolate, BaseActor, NonStop {
 }
 
 /// Set a delayed function given the duration in nanoseconds
-func setTimeout(delay: Nanoseconds, fn: @escaping TimedTask) -> Desolate<Timer> {
+@discardableResult func setTimeout(delay: Nanoseconds, fn: @escaping TimedTask) -> Desolate<Timer> {
     let timer = Timer.new()
     timer.timeout(delay: delay, fn: fn)
     return timer
 }
 
 /// Set a delayed function given the duration in nanoseconds
-func setInterval(delay: Nanoseconds, fn: @escaping TimedTask) -> Desolate<Timer> {
+@discardableResult func setInterval(delay: Nanoseconds, fn: @escaping TimedTask) -> Desolate<Timer> {
     let timer = Timer.new()
     timer.interval(delay: delay, fn: fn)
     return timer

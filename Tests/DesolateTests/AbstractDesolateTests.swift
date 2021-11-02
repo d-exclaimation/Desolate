@@ -61,13 +61,4 @@ final class AbstractDesolateTests: XCTestCase {
             }
         }
     }
-
-    func testTimer() async throws {
-        var done = 0
-        let _ = setTimeout(delay: 10.milliseconds) {
-            done += 1
-        }
-        await Task.sleep(11.milliseconds)
-        XCTAssert(done == 1)
-    }
 }

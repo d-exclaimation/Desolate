@@ -21,19 +21,22 @@ public typealias AsyncFailable<ReturnType> = () async throws -> ReturnType
 ///   - operation: Asynchronous function that return the proper value
 /// - Returns: Result of the Successful value or a BridgeError
 public func conduit<Success>(timeout dur: TimeInterval, for operation: @escaping Async<Success>) -> Result<Success, CollapsedBridge> {
+    let inbox = Inbox<Success>()
     let lock = NSConditionLock(condition: 0)
-    var result: Result<Success, CollapsedBridge> = .failure(.idle)
 
     func closure() async {
         lock.lock(whenCondition: 0)
         let res = await operation()
-        result = .success(res)
+        await inbox.task(with: res)
         lock.unlock(withCondition: 0)
     }
 
     switch bridge(timeout: dur, for: closure) {
     case .success(_):
-        return result
+        if let succ = try? inbox.acquire() {
+            return .success(succ)
+        }
+        return .failure(.timeout)
     case .failure(let err):
         return .failure(err)
     }
@@ -46,17 +49,17 @@ public func conduit<Success>(timeout dur: TimeInterval, for operation: @escaping
 ///   - operation: Asynchronous function that return another Result
 /// - Returns: Flatten Result with transformed error
 public func conduit<Success, Failure: Error>(timeout dur: TimeInterval, under operation: @escaping Async<Result<Success, Failure>>) -> Result<Success, CollapsedBridge> {
+    let inbox = Inbox<Result<Success, CollapsedBridge>>()
     let lock = NSConditionLock(condition: 0)
-    var result: Result<Success, CollapsedBridge> = .failure(.idle)
 
     func closure() async {
         lock.lock(whenCondition: 0)
         switch await operation() {
         case .success(let res):
-            result = .success(res)
+            await inbox.task(with: .success(res))
             break
         case .failure(let error):
-            result = .failure(.failure(error: error))
+            await inbox.task(with: .failure(.failure(error: error)))
             break
         }
         lock.unlock(withCondition: 0)
@@ -64,7 +67,10 @@ public func conduit<Success, Failure: Error>(timeout dur: TimeInterval, under op
 
     switch bridge(timeout: dur, for: closure) {
     case .success(_):
-        return result
+        if let res = try? inbox.acquire() {
+            return res
+        }
+        return .failure(.timeout)
     case .failure(let err):
         return .failure(err)
     }

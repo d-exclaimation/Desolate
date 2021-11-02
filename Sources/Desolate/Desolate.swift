@@ -72,6 +72,7 @@ import Foundation
 public struct Desolate<ActorType> where ActorType: AbstractDesolate  {
     /// inner actors of the reference
     internal var innerActor: ActorType
+    internal var mailbox: DispatchQueue = DispatchQueue(label: "desolate-mailbox-\(UUID().uuidString)")
 
     public init(of ref: ActorType) {
         innerActor = ref
@@ -82,14 +83,14 @@ public struct Desolate<ActorType> where ActorType: AbstractDesolate  {
     ///
     /// - Parameter msg: Message to be sent
     public func tell(with msg: ActorType.MessageType) {
-        Task.init(priority: .medium) { await innerActor.receive(msg) }
+        Task.init(priority: .high) { await innerActor.receive(msg) }
     }
 
     /// Asynchronously send a message to the Actor referenced by this Desolate using *at-most-once* messaging semantics.
     ///
     /// - Parameter msg: Message to be sent:
     public func task(with msg: ActorType.MessageType) async {
-        let task = Task {
+        let task = Task.init(priority: .high) {
             await innerActor.receive(msg)
         }
         await task.value

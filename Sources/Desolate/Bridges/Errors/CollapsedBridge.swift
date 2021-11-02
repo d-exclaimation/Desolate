@@ -9,7 +9,7 @@
 import Foundation
 
 /// Collapsed Async to Sync bridge due to failures, timeouts or idles
-public enum CollapsedBridge: Error {
+@frozen public enum CollapsedBridge: Error {
     /// Async function thrown an error
     case failure(error: Error)
 
