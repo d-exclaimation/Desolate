@@ -8,15 +8,19 @@
 
 import Foundation
 
+/// A Unsigned integer for nanoseconds
+public typealias Nanoseconds = UInt64
+
 /// A function that returns nothing
 public typealias TimedTask = () -> Void
 
 /// Timer's action can be performed
-public enum TimerActions {
+public enum Timing {
     /// Set a delayed function given the duration in nanoseconds
-    case timeout(delay: UInt64, fn: TimedTask)
+    case timeout(delay: Nanoseconds, fn: TimedTask)
+
     /// Set a repeated function given the duration in nanoseconds
-    case interval(delay: UInt64, fn: TimedTask)
+    case interval(delay: Nanoseconds, fn: TimedTask)
 
     /// Stop the current running task
     case cancel
@@ -28,9 +32,9 @@ public enum TimerActions {
 /// Timer Actor that request to a schedule an action at a later time
 public actor Timer: AbstractDesolate, BaseActor, NonStop {
 
-    private var current: Task<TimerActions, Error>? = nil
+    private var current: Task<Timing, Error>? = nil
 
-    public func onMessage(msg: TimerActions) async -> Signal {
+    public func onMessage(msg: Timing) async -> Signal {
         switch msg {
         case .timeout(delay: let delay, fn: let fn):
             if current.isSome { break }
@@ -47,6 +51,9 @@ public actor Timer: AbstractDesolate, BaseActor, NonStop {
                 return .interval(delay: delay, fn: fn)
             }
         case .cancel:
+            if let curr = current {
+                curr.cancel()
+            }
             current = .none
         case .ignore:
             break
@@ -70,14 +77,14 @@ public actor Timer: AbstractDesolate, BaseActor, NonStop {
 }
 
 /// Set a delayed function given the duration in nanoseconds
-func setTimeout(delay: UInt64, fn: @escaping TimedTask) -> Desolate<Timer> {
+func setTimeout(delay: Nanoseconds, fn: @escaping TimedTask) -> Desolate<Timer> {
     let timer = Timer.new()
     timer.timeout(delay: delay, fn: fn)
     return timer
 }
 
 /// Set a delayed function given the duration in nanoseconds
-func setInterval(delay: UInt64, fn: @escaping TimedTask) -> Desolate<Timer> {
+func setInterval(delay: Nanoseconds, fn: @escaping TimedTask) -> Desolate<Timer> {
     let timer = Timer.new()
     timer.interval(delay: delay, fn: fn)
     return timer

@@ -11,16 +11,16 @@ import Foundation
 extension Desolate where ActorType == Timer {
 
     /// Set a delayed function given the duration in nanoseconds
-    public func timeout(delay: UInt64, fn: @escaping TimedTask) {
+    public func timeout(delay: Nanoseconds, fn: @escaping TimedTask) {
         tell(with: .timeout(delay: delay, fn: fn))
     }
 
     /// Set a repeated function given the duration in nanoseconds
-    public func interval(delay: UInt64, fn: @escaping TimedTask)  {
+    public func interval(delay: Nanoseconds, fn: @escaping TimedTask)  {
         tell(with: .interval(delay: delay, fn: fn))
     }
 
-    /// Set a repeated function given the duration in nanoseconds
+    /// Cancel the timer
     public func cancel() {
         tell(with: .cancel)
     }
