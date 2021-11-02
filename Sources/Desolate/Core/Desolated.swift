@@ -12,29 +12,23 @@ import Foundation
 struct Desolated<Value> {
 
     private var innerHook: Desolate<AsyncCapsule<Value>>
-    private var timeout: TimeInterval
-    private var fallback: () -> Value
+    private let timeout: TimeInterval
+    private let cache: InMemoryCache<Value>
 
     var wrappedValue: Value {
-        get {
-            print("Getter called")
-            return innerHook.maybe() ?? fallback()
-        } set {
-            innerHook.set(newValue)
-        }
+        get { cache.cache { try innerHook.get() } }
+        set { innerHook.set(newValue) }
     }
 
     init(wrappedValue: Value) {
         innerHook = hook { wrappedValue }
         timeout = 5.0
-        fallback = {
-            fatalError("No value given")
-        }
+        cache = InMemoryCache<Value> { wrappedValue }
     }
 
     init(wrappedValue: Value, timeout tm: TimeInterval, fallback fb: @escaping () -> Value) {
         innerHook = hook { wrappedValue }
         timeout = tm
-        fallback = fb
+        cache = InMemoryCache<Value> { wrappedValue }
     }
 }

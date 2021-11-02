@@ -19,8 +19,6 @@ final class AbstractDesolateTests: XCTestCase {
         func onMessage(msg: Int) async -> Signal {
             if curr <= msg {
                 curr = msg
-            } else {
-                fatalError("Failure in order")
             }
             return .running
         }

@@ -75,12 +75,12 @@ public class Receiver<ReceivedType> {
     /// Send a response message to the Actor referenced by this Receiver
     ///
     /// - Parameter msg: Message to be sent
-    public func tell(with msg: ReceivedType) { fatalError("Receiver was never given a value") }
+    public func tell(with msg: ReceivedType) { }
 
     /// Asynchronously send a response message to the Actor referenced by this Receiver.
     ///
     /// - Parameter msg: Message to be sent:
-    public func task(with msg: ReceivedType) async { fatalError("Receiver was never given a value") }
+    public func task(with msg: ReceivedType) async { }
 }
 
 /// Receiver Wrapper for Desolate

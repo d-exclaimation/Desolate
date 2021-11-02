@@ -1,5 +1,5 @@
 //
-//  Desolate+StateHook.swift
+//  Desolate+Capsule.swift
 //  Desolate
 //
 //  Created by d-exclaimation on 9:26 PM.
@@ -11,35 +11,19 @@ import Foundation
 extension Desolate where ActorType: CapsuleInterface  {
 
     /// Get and wait from am AsyncCapsule / Hook
-    func get(timeout: TimeInterval = 5.0) -> ActorType.Value where ActorType.MessageType == HookIntent<ActorType.Value> {
+    func get(timeout: TimeInterval = 5.0) throws -> ActorType.Value where ActorType.MessageType == HookIntent<ActorType.Value> {
         let res = conduit(timeout: timeout) { try await ask { .get(ref: $0) } }
         switch res {
         case .success(let val):
             return val
         case .failure(let err):
-            fatalError(err.localizedDescription)
+            throw err
         }
     }
-
-    /// Get asynchronous from an AsyncCapsule / Hook but return an optional
-    func maybe(timeout: TimeInterval = 5.0) -> ActorType.Value? where ActorType.MessageType == HookIntent<ActorType.Value> {
-        let res = conduit(timeout: timeout) { () -> ActorType.Value in
-            try await ask { .get(ref: $0) }
-        }
-        switch res {
-        case .success(let val):
-            return val
-        case .failure(_):
-            return nil
-        }
-    }
-
 
     /// Get asynchronous from an AsyncCapsule / Hook
-    func get() async -> ActorType.Value where ActorType.MessageType == HookIntent<ActorType.Value> {
-        let res = try? await ask { .get(ref: $0) }
-        guard let res = res else { fatalError() }
-        return res
+    func get() async throws -> ActorType.Value where ActorType.MessageType == HookIntent<ActorType.Value> {
+        try await ask { .get(ref: $0) }
     }
 
     /// Set and not wait from an AsyncCapsule / Hook

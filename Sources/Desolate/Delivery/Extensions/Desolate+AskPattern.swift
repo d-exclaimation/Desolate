@@ -22,7 +22,7 @@ extension Desolate {
         with fn: @escaping (Receiver<ReturnType>) -> ActorType.MessageType
     ) async throws -> ReturnType {
         let inbox = Inbox<ReturnType>()
-        await task(with: fn(inbox))
+        await task(with: fn(inbox.ref))
         return try await inbox.get(timeout: timeout)
     }
 
@@ -38,7 +38,7 @@ extension Desolate {
         using fn: @escaping (Receiver<ReturnType>) -> ActorType.MessageType
     ) async -> Result<ReturnType, Error> {
         let inbox = Inbox<ReturnType>()
-        await task(with: fn(inbox))
+        await task(with: fn(inbox.ref))
         return await Task { try await inbox.get(timeout: timeout) }.result
     }
 

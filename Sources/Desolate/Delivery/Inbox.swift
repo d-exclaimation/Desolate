@@ -5,27 +5,22 @@
 import Foundation
 
 /// Inbox for one-time or one value in memory storage / cache
-public class Inbox<MessageType>: Receiver<MessageType> {
+public actor Inbox<Value>: AbstractDesolate, NonStop {
     /// Private internal state
-    private var cache: MessageType? = nil
+    private var cache: Value? = nil
 
-    internal override init() {}
-
-    public override func tell(with msg: MessageType) {
+    public func onMessage(msg: Value) async -> Signal {
         cache = msg
-    }
-
-    public override func task(with msg: MessageType) async {
-       cache = msg
+        return same
     }
 
     /// Access the internal state if available otherwise wait
     ///
     /// - Returns: The cached value
     /// - Throws: A string as error for timeout
-    public func get(timeout: TimeInterval = 5.0) async throws -> MessageType {
+    public func get(timeout: TimeInterval = 5.0) async throws -> Value {
         if let cache = cache {
-                return cache
+            return cache
         }
         throw AskPatternError(timeout: timeout)
     }
@@ -34,7 +29,7 @@ public class Inbox<MessageType>: Receiver<MessageType> {
     ///
     /// - Returns: The cached value
     /// - Throws: A string as error for timeout
-    internal func acquire(timeout: TimeInterval = 5.0) throws -> MessageType {
+    internal func acquire(timeout: TimeInterval = 5.0) throws -> Value {
         if let cache = cache {
             return cache
         }
