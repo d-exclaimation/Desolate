@@ -1,3 +1,8 @@
+<p align="center">
+<img src="./icon.png" width="250" />
+</p>
+
+
 # Desolate
 
 A scalable concurrency toolkit for Swift 5.5+
