@@ -10,7 +10,7 @@ import Foundation
 
 /// An Actor that conforms to an AbstractDesolate is always `.running`.
 ///
-/// ```
+/// ```swift
 /// actor Logger: AbstractBehavior, NonStop {
 ///     func onMessage(msg: String) async -> Signal {
 ///         print("[\(Date().ISO8601Format())]: \(msg)")

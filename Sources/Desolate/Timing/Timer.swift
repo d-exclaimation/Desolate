@@ -8,7 +8,7 @@
 
 import Foundation
 
-///
+//
 // A diagram describing the Timer actor on how it handled timeout and intervals
 //
 // *: Do note that the Desolate to Timer actor communication is simplified in the diagram,
@@ -37,7 +37,7 @@ import Foundation
 // │                           │                              │     │
 // │  Synchronous block        └──────────────────────────────┘     │
 // └────────────────────────────────────────────────────────────────┘
-///
+//
 
 /// A Unsigned integer for nanoseconds
 public typealias Nanoseconds = UInt64

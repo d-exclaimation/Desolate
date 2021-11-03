@@ -7,7 +7,7 @@
 //
 import Foundation
 
-///
+//
 // These are diagrams showing the workflow of Desolate,
 // when it comes to actor isolation in asynchronous block with synchronous or asynchronous code input
 //
@@ -62,13 +62,15 @@ import Foundation
 // │                                                                                                    │
 // │                                                                                                    │
 // └────────────────────────────────────────────────────────────────────────────────────────────────────┘
+//
+
+
+/// An interface on top of Swift Actor to provide extended capabilities conforming to Desolate package motives.
 ///
-
-
-/// Actor Desolate is a data structure that:
-/// - handles dispatching actions both on an asynchronous code block or on a synchronous one
-/// - wraps all capabilities giving a single data structure that can be safely and easily extended
-/// - maintains actor isolation while allowing synchronous code to message an actor
+/// ``Desolate/Desolate`` provide a way for dispatching actor specific
+/// actions from asynchronous block or a synchronous one,
+/// while fully maintain actor isolation and its concurrent
+/// capabilities.
 public struct Desolate<ActorType> where ActorType: AbstractDesolate  {
     /// inner actors of the reference
     internal var innerActor: ActorType
@@ -95,3 +97,6 @@ public struct Desolate<ActorType> where ActorType: AbstractDesolate  {
         await task.value
     }
 }
+
+/// Another alias for Desolate which may prove useful when referring to implementation
+public typealias IsolatedActor<ActorType: AbstractDesolate> = Desolate<ActorType>

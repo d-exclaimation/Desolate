@@ -9,10 +9,10 @@ import Foundation
 
 /// Signal indicate how operational an Actor
 ///
-/// ```
+/// ```swift
 /// enum CounterActions {
 ///     case increment, decrement, stop
-///     case get(ref: Recipient<Int>)
+///     case get(ref: Receiver<Int>)
 /// }
 /// actor Counter: AbstractDesolate actor {
 ///     var status: Signal = .running

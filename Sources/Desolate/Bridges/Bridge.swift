@@ -17,9 +17,9 @@ public typealias AsyncThrowFunction = () async throws -> Void
 /// Bridge the async blocks with a non async one, allowing async code
 /// to be executed top level
 ///
-/// **Blocking call**
+/// - Attention: Blocking call
 ///
-/// ```
+/// ```swift
 /// bridge {
 ///     async let res = asyncFunction()
 ///     await print(res)
@@ -40,9 +40,9 @@ public func bridge(for operation: @escaping AsyncFunction) {
 /// Bridge the async blocks with a non async one, allowing async throwing code
 /// to be executed top level
 ///
-/// **Blocking call**
+/// - Attention: Blocking call
 ///
-/// ```
+/// ```swift
 /// bridge {
 ///     try await asyncFunction()
 /// }
@@ -62,9 +62,9 @@ public func bridge(throw operation: @escaping AsyncThrowFunction) {
 /// Bridge the async blocks with a non async one, allowing async code
 /// to be executed top level within a timeout
 ///
-/// **Blocking throwing call**
+/// - Attention: Blocking call
 ///
-/// ```
+/// ```swift
 /// let timeout = DispatchTime.now() + DispatchTimeInterval.seconds(1)
 /// try bridge(timeout: timeout) {
 ///     async let res = asyncFunction()
@@ -93,9 +93,9 @@ public func bridge(throw operation: @escaping AsyncThrowFunction) {
 /// Bridge the async blocks with a non async one, allowing async code
 /// to be executed top level within a timeout
 ///
-/// **Blocking throwing call**
+/// - Attention: Blocking call
 ///
-/// ```
+/// ```swift
 /// let timeout = DispatchTime.now() + DispatchTimeInterval.seconds(1)
 /// try bridge(timeout: timeout) {
 ///     async let res = asyncFunction()
@@ -123,9 +123,9 @@ public func bridge(throw operation: @escaping AsyncThrowFunction) {
 /// Bridge the async blocks with a non async one, allowing async code
 /// to be executed top level within a timeout
 ///
-/// **Blocking throwing call**
+/// - Attention: Blocking call
 ///
-/// ```
+/// ```swift
 /// let timeout = DispatchTime.now() + DispatchTimeInterval.seconds(1)
 /// try bridge(timeout: timeout) {
 ///     async let res = asyncFunction()

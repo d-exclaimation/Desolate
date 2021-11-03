@@ -8,7 +8,7 @@
 
 import Foundation
 
-///
+//
 // A diagram showing receiver pattern how perform returning values with callbacks between actors:
 // ┌───────────────────────────────────────────────────────────────────────────────────────────────────────┐
 // │  Synchronous block                                                                                    │
@@ -33,11 +33,11 @@ import Foundation
 // │   └───────────────────┘                                              └───────────────────────────┘    │
 // │                                                                                                       │
 // └───────────────────────────────────────────────────────────────────────────────────────────────────────┘
-///
+//
 
 /// Receiver class is any class that can given a value of a certain type with similar API to a Desolate, usually used for a request-response within Desolate used in something like `AskPattern` with `.ask`.
 ///
-/// - Note: Receiver should not and aren't allowed to be instantiated on own its own.
+/// - Warning: Receiver should not and aren't allowed to be instantiated on own its own.
 /// - Attention: To make a Receiver, you are required to create a class that inherits and override all the methods
 ///
 /// #### Multiple responses
@@ -48,7 +48,7 @@ import Foundation
 /// ### Making Receiver
 ///
 /// - Using a Desolate `.ref`
-/// ```
+/// ```swift
 /// actor MyActor: AbstractDesolate, NonStop {
 ///     typealias MessageType = Int
 ///     ...
@@ -59,7 +59,7 @@ import Foundation
 /// ```
 ///
 /// - Inherit and Override with a custom class
-/// ```
+/// ```swift
 /// class MyLogger: Receiver<String> {
 ///     init() {}
 ///
