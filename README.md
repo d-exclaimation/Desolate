@@ -1,8 +1,12 @@
 # Desolate
 
-*Prototype* actor and async/await toolkit for Swift 5.5+
+A scalable concurrency toolkit for Swift 5.5+
+
+[`Desolate`](https://github.com/d-exclaimation/desolate) is a toolkit for Swift 5.5+ Actors and Concurrency capabilities. The library provide structures to model Swift Actors using [`Desolate`](https://github.com/d-exclaimation/desolate) that maintains its isolation while allowing both synchronous and asynchronous code to interface with the actors. [`Desolate`](https://github.com/d-exclaimation/desolate) can created with any Actor that conforms to the [`AbstractDesolate`](https://github.com/d-exclaimation/desolate/blob/main/Sources/Desolate/AbstractDesolate.swift) which only require an [`onMessage(msg:)`](https://github.com/d-exclaimation/desolate/blob/ded95df2beba461bc4d426ecc5d2b11162f16c13/Sources/Desolate/AbstractDesolate.swift#L23) method.
 
 ### Usages/Examples
+
+- [Documentation](https://github.com/d-exclaimation/desolate)
 
 Simple concurrent safe store showing the maintained isolation even when actor is given messages from a main synchronous task
 ```swift
