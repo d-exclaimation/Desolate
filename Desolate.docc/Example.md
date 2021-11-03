@@ -1,4 +1,4 @@
-# Example
+# Getting started with a simple example
 
 Desolate example usage
 
@@ -64,14 +64,14 @@ struct Main {
 ```
 
 You can use the ``Desolate/Desolate/init(of:)`` for most actors but this example we have ``Desolate/BaseActor`` which gives a static initializer, 
-named ``Desolate/AbstractDesolate/new()``.
+named ``Desolate/AbstractDesolate/create()``.
 
 ```swift
 @main
 struct Main {
     static func main() {
         // Using Desolate as an interface
-        let storage = Storage.new()
+        let storage = Storage.create()
 
         // no error, does not block next line
         storage.tell(with: .set(content: "Hello")) 
@@ -87,7 +87,7 @@ struct Main {
     }
 
     static func asyncFunction() async throws {
-        let storage = Storage.new()
+        let storage = Storage.create()
 
         // Same here, does not block next line
         storage.tell(with: .set(content: "Hello")) 

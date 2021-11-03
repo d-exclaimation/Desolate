@@ -1,6 +1,6 @@
-# Diagram
+# Understanding Desolate with a Diagram
 
-Diagrams showing how Desolate maintains Actor isolation
+Diagrams showing how Desolate maintains Actor isolation to better understand how Desolate works.
 
 ![Diagram](Diagram.png)
 
