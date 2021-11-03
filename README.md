@@ -2,15 +2,18 @@
 
 *Prototype* actor and async/await toolkit for Swift 5.5+
 
+### Usages/Examples
+
+Simple concurrent safe store showing the maintained isolation even when actor is given messages from a main synchronous task
 ```swift
 import Desolate
 
 enum StoreEvent: CustomStringConvertible {
     case update(key: String, item: String)
-    case store(item: String, ref: RecipientRef<String>)
+    case store(item: String, ref: Receiver<String>)
     case add(item: String)
-    case get(key: String, ref: RecipientRef<String?>)
-    case getAll(ref: RecipientRef<[String]>)
+    case get(key: String, ref: Receiver<String?>)
+    case getAll(ref: Receiver<[String]>)
     case delete(key: String)
 
     var description: String {
@@ -31,9 +34,7 @@ enum StoreEvent: CustomStringConvertible {
     }
 }
 
-actor Store: AbstractDesolate {
-    public var status: Signal = .running
-
+actor Store: AbstractDesolate, NonStop {
     private var storage: [String: (String, Date)] = [:]
 
     public func onMessage(msg: StoreEvent) async -> Signal {
@@ -58,7 +59,7 @@ actor Store: AbstractDesolate {
             storage.removeValue(forKey: key)
         }
 
-        return .running
+        return same
     }
 }
 
