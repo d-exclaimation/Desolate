@@ -47,7 +47,7 @@ final class DesolateTests: XCTestCase {
         try await unit("Desolate when conforming to Delivery should be able to receive responses", timeout: 5.0) { e in
             let desolate = Probe.new()
 
-            let response = try await desolate.ask { .bidirectional(content: "Hello", ref: $0) }
+            let response = try await desolate.ask(retry: 3) { .bidirectional(content: "Hello", ref: $0) }
 
             if response == "Hello" {
                 e.fulfill()

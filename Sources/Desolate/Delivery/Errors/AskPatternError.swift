@@ -9,10 +9,9 @@
 import Foundation
 
 /// Delivery Custom Error type
-/// that specify the timeout duration and error message
-@frozen public struct AskPatternError: Error {
-    /// Timeout duration / interval
-    var timeout: TimeInterval
+public struct AskPatternError: Error {
+    /// Retries
+    var retries: Int
 
     /// Localized description for the error message
     var localizedDescription: String {
@@ -20,8 +19,8 @@ import Foundation
            domain: "Desolate.Delivery",
            code: 200,
            userInfo: [
-               "Error reason": "Ask pattern timeout",
-               "Timeout duration in seconds": timeout
+               "Error reason": "Ask pattern retry exhausted, no value given",
+               "Retries": "\(retries)"
            ]
         ).localizedDescription
     }

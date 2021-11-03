@@ -16,6 +16,10 @@ internal class MutexCapsule<Value>: Receiver<Value> {
 
     override init() {}
 
+    init(state: Value) {
+        cache = state
+    }
+
     public override func tell(with msg: Value) {
         mutex.lock(whenCondition: 0)
         cache = msg

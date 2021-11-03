@@ -18,21 +18,21 @@ public actor Inbox<Value>: AbstractDesolate, NonStop {
     ///
     /// - Returns: The cached value
     /// - Throws: A string as error for timeout
-    public func get(timeout: TimeInterval = 5.0) async throws -> Value {
+    public func get() async throws -> Value {
         if let cache = cache {
             return cache
         }
-        throw AskPatternError(timeout: timeout)
+        throw AskPatternError(retries: 0)
     }
 
     /// Access the internal state if available otherwise wait
     ///
     /// - Returns: The cached value
     /// - Throws: A string as error for timeout
-    internal func acquire(timeout: TimeInterval = 5.0) throws -> Value {
+    internal func acquire() throws -> Value {
         if let cache = cache {
             return cache
         }
-        throw AskPatternError(timeout: timeout)
+        throw AskPatternError(retries: 0)
     }
 }
