@@ -32,10 +32,10 @@ func syncCodeBlock() {
 
 func asyncCodeBlock() async throws {
     // Asynchronous result can throw an error and result unwrapped Success value
-    let successValue: Success = desolate.ask(retry: 3) { .askForResult(receiver: $0) } 
+    let successValue: Success = try await desolate.ask(retry: 3) { .askForResult(receiver: $0) } 
     
     // Asynchronous result can also return Result without throwing an error
-    let result: Result<Success, Error> = desolate.query(retry: 3) { .askForResult(receiver: $0) } 
+    let result: Result<Success, Error> = await desolate.query(retry: 3) { .askForResult(receiver: $0) } 
 }
 ```
 
