@@ -8,8 +8,12 @@
 
 import Foundation
 
+/// A unit of value for concurrency, non-blocking cancellable future, or a Job / Task with result
 public typealias Deferred<Value> = Task<Value, Error>
 
+/// A concurrent job, doesn't fail, doesn't return anything
 public typealias Job = Task<Void, Never>
 
+
+/// Infallible Deferred
 public typealias UDeferred<Value> = Task<Value, Never>
