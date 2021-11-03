@@ -3,6 +3,7 @@
 /.build
 /Packages
 /*.xcodeproj
+/Desolate.docc/.docc-build
 xcuserdata/
 DerivedData/
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
