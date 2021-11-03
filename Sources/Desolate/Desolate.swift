@@ -83,9 +83,10 @@ public struct Desolate<ActorType> where ActorType: AbstractDesolate  {
     /// using `at-most-once` messaging semantics but doesn't wait for finished execution.
     ///
     /// - Parameter msg: Message to be sent
-    public func tell(with msg: ActorType.MessageType) {
+    @discardableResult public func tell(with msg: ActorType.MessageType) -> Job {
         Task.init(priority: .high) { await innerActor.receive(msg) }
     }
+
 
     /// Asynchronously send a message to the Actor referenced by this Desolate using *at-most-once* messaging semantics.
     ///

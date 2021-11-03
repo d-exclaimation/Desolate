@@ -22,7 +22,7 @@ import Foundation
 ///     init() {}
 /// }
 ///
-/// let desolate: Desolate<Logger> = Logger.new()
+/// let desolate: Desolate<Logger> = Logger.create()
 ///
 /// desolate.tell(with: "Hello")
 /// ```

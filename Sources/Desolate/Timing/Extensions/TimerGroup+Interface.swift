@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Desolate where ActorType == TimerGroup {
+extension Hourglasses where ActorType == TimerGroup {
 
     /// Set a delayed function given the duration in nanoseconds and return an UUID for cancelling
     public func timeout(delay: Nanoseconds, fn: @escaping TimedTask) -> UUID {

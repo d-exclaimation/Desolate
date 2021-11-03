@@ -21,13 +21,13 @@ struct Desolated<Value> {
     }
 
     init(wrappedValue: Value) {
-        innerHook = hook { wrappedValue }
+        innerHook = pocket { wrappedValue }
         timeout = 5.0
         cache = InMemoryCache<Value> { wrappedValue }
     }
 
     init(wrappedValue: Value, timeout tm: TimeInterval, fallback fb: @escaping () -> Value) {
-        innerHook = hook { wrappedValue }
+        innerHook = pocket { wrappedValue }
         timeout = tm
         cache = InMemoryCache<Value> { wrappedValue }
     }

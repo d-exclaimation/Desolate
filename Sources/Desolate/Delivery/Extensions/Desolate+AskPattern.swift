@@ -72,7 +72,7 @@ extension Desolate {
     func request<ReturnType>(
         retry: Int = 0,
         with fn: @escaping (Receiver<ReturnType>) -> ActorType.MessageType
-    ) -> Task<ReturnType, Error> {
+    ) -> Deferred<ReturnType> {
         Task { try await ask(retry: retry, with: fn) }
     }
 
@@ -88,7 +88,7 @@ extension Desolate {
         priority: TaskPriority?,
         retry: Int = 0,
         with fn: @escaping (Receiver<ReturnType>) -> ActorType.MessageType
-    ) -> Task<ReturnType, Error> {
+    ) -> Deferred<ReturnType> {
         Task.init(priority: priority) { try await ask(retry: retry, with: fn) }
     }
 }

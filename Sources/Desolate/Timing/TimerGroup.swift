@@ -50,6 +50,9 @@ import Foundation
 // └──────────────────────────────────────────────────────────────────────────────────────────────────────┘
 //
 
+/// A Desolated Timer group
+public typealias Hourglasses = Desolate<TimerGroup>
+
 /// Scheduling actions for the TimerGroup
 public enum Scheduling {
     /// Set a delayed function given the duration in nanoseconds
@@ -75,7 +78,7 @@ public actor TimerGroup: AbstractDesolate, BaseActor {
         switch msg {
         case .timeout(delay: let delay, fn: let fn, ref: let ref):
             let id = UUID()
-            let timer = Timer.new()
+            let timer = Timer.make()
 
             timer.tell(with: .timeout(delay: delay, fn: fn))
 
@@ -85,7 +88,7 @@ public actor TimerGroup: AbstractDesolate, BaseActor {
 
         case .interval(delay: let delay, fn: let fn, ref: let ref):
             let id = UUID()
-            let timer = Timer.new()
+            let timer = Timer.make()
 
             timer.tell(with: .interval(delay: delay, fn: fn))
 

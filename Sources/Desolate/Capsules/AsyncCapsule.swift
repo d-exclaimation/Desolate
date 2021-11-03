@@ -41,8 +41,35 @@ public actor AsyncCapsule<Value>: AbstractDesolate, CapsuleInterface, NonStop {
     }
 }
 
+/// A Desolated Async Capsule that allow for concurrent-safe mutation
+public typealias Pocket<Value> = Desolate<AsyncCapsule<Value>>
+
 /// A Desolate of an AsyncCapsule is a Hook state
+@available(*, deprecated, message: "Use `Pocket` instead")
 public typealias Hook<Value> = Desolate<AsyncCapsule<Value>>
+
+/// Initialized a new Pocker
+///
+/// ```swift
+/// let myNumber = pockel { 0 }
+///
+/// Task.detached {
+///     myNumber.set { $0 + 1 } // No data race
+/// }
+///
+/// Task.detached {
+///     myNumber.set { $0 + 1 } // No data race
+/// }
+///
+/// Task.detached {
+///     let curr = await myNumber.get() // No data race
+///     print(curr)
+/// }
+/// ```
+///
+/// - Parameter fn: Function for creating the initial value
+/// - Returns: a Desolated Async Capsule
+public func pocket<Value>(_ fn: () -> Value) -> Pocket<Value> { Desolate(of: AsyncCapsule<Value>(state: fn())) }
 
 /// Initialized a new hook
 ///
@@ -65,4 +92,5 @@ public typealias Hook<Value> = Desolate<AsyncCapsule<Value>>
 ///
 /// - Parameter fn: Function for creating the initial value
 /// - Returns: a Desolated Async Capsule
+@available(*, deprecated, message: "Use `pocket(_:` instead")
 public func hook<Value>(fn: () -> Value) -> Hook<Value> { Desolate(of: AsyncCapsule<Value>(state: fn())) }

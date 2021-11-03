@@ -153,6 +153,7 @@ public func bridge(throw operation: @escaping AsyncThrowFunction) {
 /// Dispatch an async function to be executed on another task from a non async function.
 ///
 /// - Parameter operation: Asynchronous function closure.
+@available(*, deprecated, message: "Use `Task.init` or `Task.detached` from Swift Standard Concurrency Library instead")
 public func dispatch(for operation: @escaping AsyncFunction) {
     Task {
         await operation()
@@ -162,6 +163,7 @@ public func dispatch(for operation: @escaping AsyncFunction) {
 /// Dispatch an async throwing function to be executed on another task from non async function.
 ///
 /// - Parameter operation: Asynchronous throwing function closure.
+@available(*, deprecated, message: "Use `Task.init` or `Task.detached` from Swift Standard Concurrency Library instead")
 public func dispatch(throw operation: @escaping AsyncThrowFunction) {
     Task {
         try await operation()

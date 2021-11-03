@@ -37,7 +37,7 @@ final class DesolateTests: XCTestCase {
 
     func testTell() throws {
         try unit("Desolate should be able to receive responses from a synchronous input", timeout: 1.0) { e in
-            let desolate = Probe.new()
+            let desolate = Probe.make()
             desolate.tell(with: .unidirectional(content: "Hello"))
             e.fulfill()
         }
@@ -45,7 +45,7 @@ final class DesolateTests: XCTestCase {
 
     func testAsk() async throws {
         try await unit("Desolate when conforming to Delivery should be able to receive responses", timeout: 5.0) { e in
-            let desolate = Probe.new()
+            let desolate = Probe.make()
 
             let response = try await desolate.ask(retry: 3) { .bidirectional(content: "Hello", ref: $0) }
 

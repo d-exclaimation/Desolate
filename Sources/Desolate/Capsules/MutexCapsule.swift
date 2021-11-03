@@ -9,7 +9,7 @@
 import Foundation
 
 /// Mutex Capsule ia a thread safe wrapper around mutual exclusion
-internal class MutexCapsule<Value>: Receiver<Value> {
+public class MutexCapsule<Value>: Receiver<Value> {
     /// Private internal state
     private var cache: Value? = nil
     private let mutex: NSConditionLock = NSConditionLock(condition: 0)

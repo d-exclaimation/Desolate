@@ -12,7 +12,7 @@ import XCTest
 
 final class DecoratorTests: XCTestCase {
     class MyClass {
-        let atomic = hook { 1 }
+        let atomic = pocket { 1 }
 
         @Desolated var safe = 1
     }

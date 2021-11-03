@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Desolate where ActorType == Timer {
+extension Hourglass where ActorType == Timer {
 
     /// Set a delayed function given the duration in nanoseconds
     public func timeout(delay: Nanoseconds, fn: @escaping TimedTask) {
