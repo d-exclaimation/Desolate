@@ -40,6 +40,11 @@ import Foundation
 /// - Note: Receiver should not and aren't allowed to be instantiated on own its own.
 /// - Attention: To make a Receiver, you are required to create a class that inherits and override all the methods
 ///
+/// #### Multiple responses
+/// - Receiver aren't setup with receiving multiple values in mind. While that's possible for custom implementation, built-in receivers are going to override the values if it were to given more than once.
+/// - Receiver also doesn't offer any guarantee for Ask Pattern that the last given value will be the result given back
+/// - On the other end when making a receiver, it's best to keep it idempotent.
+///
 /// ### Making Receiver
 ///
 /// - Using a Desolate `.ref`
@@ -77,36 +82,9 @@ public class Receiver<ReceivedType> {
     /// - Parameter msg: Message to be sent
     public func tell(with msg: ReceivedType) { }
 
-    /// Asynchronously send a response message to the Actor referenced by this Receiver.
+    /// Asynchronously send a response message to the Actor referenced by this Receiver,
+    /// which allow awaiting the receiver to successful received and handle the response before moving one
     ///
     /// - Parameter msg: Message to be sent:
     public func task(with msg: ReceivedType) async { }
-}
-
-/// Receiver Wrapper for Desolate
-internal class DesolateReceiver<ActorType: AbstractDesolate>: Receiver<ActorType.MessageType> {
-    /// inner actors of the reference
-    internal var innerActor: ActorType
-
-    public init(of ref: ActorType) {
-        innerActor = ref
-    }
-
-    /// Send a message to the Actor referenced by this Desolate
-    /// using `at-most-once` messaging semantics but doesn't wait for finished execution.
-    ///
-    /// - Parameter msg: Message to be sent
-    public override func tell(with msg: ActorType.MessageType) {
-        Task.init { await innerActor.receive(msg) }
-    }
-
-    /// Asynchronously send a message to the Actor referenced by this Desolate using *at-most-once* messaging semantics.
-    ///
-    /// - Parameter msg: Message to be sent:
-    public override func task(with msg: ActorType.MessageType) async {
-        let task = Task {
-            await innerActor.receive(msg)
-        }
-        await task.value
-    }
 }

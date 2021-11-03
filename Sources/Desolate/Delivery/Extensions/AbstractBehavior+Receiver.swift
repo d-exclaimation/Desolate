@@ -13,4 +13,9 @@ extension AbstractDesolate {
     var ref: Receiver<MessageType> {
         DesolateReceiver(of: self)
     }
+
+    /// Get a receiver from a AbstractDesolate with converter / mappers
+    func ref<ReceiverValueType>(_ mapper: @escaping (ReceiverValueType) -> MessageType) -> Receiver<ReceiverValueType> {
+        PipeableReceiver(of: self, mapper: mapper)
+    }
 }
