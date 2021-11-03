@@ -13,7 +13,7 @@ extension AbstractDesolate where Self: BaseActor {
     /// Given a AbstractDesolate conforms to a BaseActor,
     /// a complete desolate can be initialized using the static `new()` method.
     ///
-    /// ```
+    /// ```swift
     /// actor Logger: AbstractBehavior, BaseActor {
     ///     var status: Signal = .running
     ///

@@ -45,4 +45,24 @@ public actor AsyncCapsule<Value>: AbstractDesolate, CapsuleInterface, NonStop {
 public typealias Hook<Value> = Desolate<AsyncCapsule<Value>>
 
 /// Initialized a new hook
+///
+/// ```swift
+/// let myNumber = hook { 0 }
+///
+/// Task.detached {
+///     hook.set { $0 + 1 } // No data race
+/// }
+///
+/// Task.detached {
+///     hook.set { $0 + 1 } // No data race
+/// }
+///
+/// Task.detached {
+///     let curr = await hook.get() // No data race
+///     print(curr)
+/// }
+/// ```
+///
+/// - Parameter fn: Function for creating the initial value
+/// - Returns: a Desolated Async Capsule
 public func hook<Value>(fn: () -> Value) -> Hook<Value> { Desolate(of: AsyncCapsule<Value>(state: fn())) }

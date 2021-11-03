@@ -19,6 +19,6 @@ public protocol AbstractDesolate: Actor {
     /// Receive messages with `at-most-once` basis and ordered guarantee and perform defined action
     ///
     /// - Parameter msg: Message received
-    /// - Returns: A signal to let the Desolate handle the Actor at the current state
+    /// - Returns: A signal to let the ``Desolate/Desolate`` handle the Actor at the current state
     func onMessage(msg: MessageType) async -> Signal
 }

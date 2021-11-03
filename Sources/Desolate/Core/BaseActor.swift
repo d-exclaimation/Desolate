@@ -10,9 +10,7 @@ import Foundation
 
 /// Any Actor that can be instantiated with no parameters
 ///
-/// ```
-///
-///
+/// ```swift
 /// actor Logger: AbstractBehavior, BaseActor {
 ///     var status: Signal = .running
 ///

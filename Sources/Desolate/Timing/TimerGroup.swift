@@ -8,7 +8,7 @@
 
 import Foundation
 
-///
+//
 // A diagram for the TimerGroup managing multiple timer together, more info for each timer look in `Timer.swift`.
 // ┌──────────────────────────────────────────────────────────────────────────────────────────────────────┐
 // │                                                                                                      │
@@ -48,7 +48,7 @@ import Foundation
 // │  Synchronous block            └───────────────────────────────────────────────────────────────────┘  │
 // │                                                                                                      │
 // └──────────────────────────────────────────────────────────────────────────────────────────────────────┘
-///
+//
 
 /// Scheduling actions for the TimerGroup
 public enum Scheduling {
