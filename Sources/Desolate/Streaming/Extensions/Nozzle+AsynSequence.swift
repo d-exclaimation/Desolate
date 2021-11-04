@@ -10,6 +10,7 @@ import Foundation
 
 extension Nozzle: AsyncSequence {
 
+    /// Create an async iterator out of Nozzle
     public func makeAsyncIterator() -> Iterator {
         Iterator(desolate.innerActor)
     }
@@ -24,7 +25,7 @@ extension Nozzle: AsyncSequence {
             current = actor
         }
 
-        /// Send in the next value from the queue depending on the ``Desolate/Source/Next``
+        /// Send in the next value from the queue.
         public mutating func next() async -> Element? {
             while await current.ongoing() {
                 if let next = await current.next() {

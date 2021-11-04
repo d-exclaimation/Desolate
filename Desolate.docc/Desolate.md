@@ -12,3 +12,5 @@ The library also comes with a lot utilities for common use cases when dealing wi
 More in depth, look into:
 - <doc:Example>, for example usage / tutorial
 - <doc:Diagram>, for explaination how ``Desolate`` work
+- <doc:Bridges>, for bridging synchronous and asynchronous code
+- <doc:Streaming>, for a tour of data structures that use ``Desolate/Desolate`` to conforms [`AsyncSequence`](https://developer.apple.com/documentation/swift/asyncsequence)

@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// A Reactive stream implementation of hot stream using Actors
+/// A Hot broadcast stream implementation using Desolated actors, that can easily create multiple ``Desolate/Nozzle``
 public struct Jet<Element> {
     public typealias Flow = Desolate<Nozzle<Element>.Current>
 

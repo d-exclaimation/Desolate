@@ -1,6 +1,6 @@
 # Getting started with a simple example
 
-Desolate example usage
+A guide on simple Desolate usage
 
 ## Overview
 

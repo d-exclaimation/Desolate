@@ -8,7 +8,35 @@
 
 import Foundation
 
-// A Cold toggleable stream
+//
+// Diagram for how Nozzle work and how it conforms to AsyncSequence and use Desolate to achive that
+// ┌───────────────────────────────────────────────────────────────────────────────┐
+// │                                                                               │
+// │                                       ┌─────────────────────────────────────┐ │
+// │          ,,,                          │                                     │ │
+// │                                       │   Asynchronous Isolated Scope       │ │
+// │           │                           │                                     │ │
+// │           │                           │            ┌────────────────────┐   │ │
+// │           │                           │   Incoming │                    │   │ │
+// │           │                    ┌──────┴───┐    ┌─► │  Current:Desolate  │   │ │
+// │           ▼                    │          │    │   │                    │   │ │
+// │                                │  Nozzle  │ ───┘   └────────────────────┘   │ │
+// │  for await data in ...         │          │             ▲                   │ │
+// │                      ▲         └─┬──┬─┬───┘             │     │ .next       │ │
+// │           │          │           │  │ │           .next │     │  (response) │ │
+// │           │          └───────────┘  │ │                       ▼             │ │
+// │           │        AsyncSequence    │ │         ┌────────────────►          │ │
+// │           │                         │ │         ▲                │          │ │
+// │           ▼                         └─┼──────── │ AsyncIterator  │          │ │
+// │                                       │         │                ▼          │ │
+// │          ...                          │         └◄───────────────┘          │ │
+// │                                       │                                     │ │
+// │                                       └─────────────────────────────────────┘ │
+// │                                                                               │
+// └───────────────────────────────────────────────────────────────────────────────┘
+
+
+/// A Cold toggleable stream using Desolated actors
 public struct Nozzle<Element>: Identifiable {
 
     public let id: UUID = UUID()
