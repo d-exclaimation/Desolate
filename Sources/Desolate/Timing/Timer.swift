@@ -45,26 +45,27 @@ public typealias Hourglass = Desolate<Timer>
 /// A Unsigned integer for nanoseconds
 public typealias Nanoseconds = UInt64
 
-/// A function that returns nothing
-public typealias TimedTask = () -> Void
-
-/// Timer's action can be performed
-public enum Timing {
-    /// Set a delayed function given the duration in nanoseconds
-    case timeout(delay: Nanoseconds, fn: TimedTask)
-
-    /// Set a repeated function given the duration in nanoseconds
-    case interval(delay: Nanoseconds, fn: TimedTask)
-
-    /// Stop the current running task
-    case cancel
-
-    /// Ignore this message
-    case ignore
-}
-
 /// Timer Actor that request to a schedule an action at a later time
 public actor Timer: AbstractDesolate, BaseActor, NonStop {
+
+    /// A function that returns nothing
+    public typealias Action = () -> Void
+
+    /// Timer's action can be performed
+    public enum Timing {
+        /// Set a delayed function given the duration in nanoseconds
+        case timeout(delay: Nanoseconds, fn: Action)
+
+        /// Set a repeated function given the duration in nanoseconds
+        case interval(delay: Nanoseconds, fn: Action)
+
+        /// Stop the current running task
+        case cancel
+
+        /// Ignore this message
+        case ignore
+    }
+
 
     private var current: Deferred<Timing>? = nil
 
@@ -111,14 +112,14 @@ public actor Timer: AbstractDesolate, BaseActor, NonStop {
 }
 
 /// Set a delayed function given the duration in nanoseconds
-@discardableResult func setTimeout(delay: Nanoseconds, fn: @escaping TimedTask) -> Desolate<Timer> {
+@discardableResult func setTimeout(delay: Nanoseconds, fn: @escaping Timer.Action) -> Desolate<Timer> {
     let timer = Timer.make()
     timer.timeout(delay: delay, fn: fn)
     return timer
 }
 
 /// Set a delayed function given the duration in nanoseconds
-@discardableResult func setInterval(delay: Nanoseconds, fn: @escaping TimedTask) -> Desolate<Timer> {
+@discardableResult func setInterval(delay: Nanoseconds, fn: @escaping Timer.Action) -> Desolate<Timer> {
     let timer = Timer.make()
     timer.interval(delay: delay, fn: fn)
     return timer

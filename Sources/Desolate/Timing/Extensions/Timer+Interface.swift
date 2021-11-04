@@ -11,12 +11,12 @@ import Foundation
 extension Hourglass where ActorType == Timer {
 
     /// Set a delayed function given the duration in nanoseconds
-    public func timeout(delay: Nanoseconds, fn: @escaping TimedTask) {
+    public func timeout(delay: Nanoseconds, fn: @escaping Timer.Action) {
         tell(with: .timeout(delay: delay, fn: fn))
     }
 
     /// Set a repeated function given the duration in nanoseconds
-    public func interval(delay: Nanoseconds, fn: @escaping TimedTask)  {
+    public func interval(delay: Nanoseconds, fn: @escaping Timer.Action)  {
         tell(with: .interval(delay: delay, fn: fn))
     }
 

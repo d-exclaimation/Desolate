@@ -8,27 +8,29 @@
 
 import Foundation
 
-/// Hook Intent to handle hook getter and setter
-@frozen public enum HookIntent<Value> {
-    /// Getter
-    case get(ref: Receiver<Value>)
 
-    /// Setter
-    case set(new: Value)
-
-    /// Applier
-    case apply(fn: (Value) -> Value)
-}
 
 /// A Capsule actor for handling concurrent safe but blocking getter and setter
 public actor AsyncCapsule<Value>: AbstractDesolate, CapsuleInterface, NonStop {
+    /// Capsule Intent to handle  getter and setter
+    @frozen public enum Intent {
+        /// Getter
+        case get(ref: Receiver<Value>)
+
+        /// Setter
+        case set(new: Value)
+
+        /// Applier
+        case apply(fn: (Value) -> Value)
+    }
+
     private var safeState: Value
 
     public init(state: Value) {
         safeState = state
     }
 
-    public func onMessage(msg: HookIntent<Value>) async -> Signal {
+    public func onMessage(msg: Intent) async -> Signal {
         switch msg {
         case .get(ref: let ref):
             ref.tell(with: safeState)

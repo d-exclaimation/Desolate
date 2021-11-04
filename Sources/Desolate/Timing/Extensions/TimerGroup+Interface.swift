@@ -11,7 +11,7 @@ import Foundation
 extension Hourglasses where ActorType == TimerGroup {
 
     /// Set a delayed function given the duration in nanoseconds and return an UUID for cancelling
-    public func timeout(delay: Nanoseconds, fn: @escaping TimedTask) -> UUID {
+    public func timeout(delay: Nanoseconds, fn: @escaping Timer.Action) -> UUID {
         let res = conduit(timeout: 2.0) {
             try await ask { .timeout(delay: delay, fn: fn, ref: $0) }
         }
@@ -25,7 +25,7 @@ extension Hourglasses where ActorType == TimerGroup {
     }
 
     /// Set a repeated function given the duration in nanoseconds and return an UUID for cancelling
-    public func interval(delay: Nanoseconds, fn: @escaping TimedTask) -> UUID {
+    public func interval(delay: Nanoseconds, fn: @escaping Timer.Action) -> UUID {
         let res = conduit(timeout: 2.0) {
             try await ask { .interval(delay: delay, fn: fn, ref: $0) }
         }
