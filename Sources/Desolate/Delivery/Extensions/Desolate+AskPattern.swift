@@ -12,12 +12,18 @@ extension Desolate {
 
     /// The ask-pattern implements the initiator side of an asynchronous request–reply protocol.
     ///
+    /// ```swift
+    /// let myActor = Desolate(of: MyActor())
+    ///
+    /// myActor.ask(retry: 10) { .returnSomething(ref: $0) }
+    /// ```
+    ///
     /// - Parameters:
     ///   - retry: The amount retry trying to await for the value
     ///   - fn: Function to return a Message that accepts a RecipientRef
     /// - Returns: The return type for the accepted RecipientRef from `fn`
     /// - Throws: A timeout error from the Inbox
-    func ask<ReturnType>(
+    public func ask<ReturnType>(
         retry: Int = 0,
         with fn: @escaping (Receiver<ReturnType>) -> ActorType.MessageType
     ) async throws -> ReturnType {
@@ -42,7 +48,7 @@ extension Desolate {
     ///   - fn: Function to return a Message that accepts a RecipientRef
     /// - Returns: The return type for the accepted RecipientRef from `fn`
     /// - Throws: A timeout error from the Inbox
-    func query<ReturnType>(
+    public func query<ReturnType>(
         retry: Int = 0,
         using fn: @escaping (Receiver<ReturnType>) -> ActorType.MessageType
     ) async -> Result<ReturnType, Error> {
@@ -69,7 +75,7 @@ extension Desolate {
     ///   - fn: Function to return a Message that accepts a RecipientRef
     /// - Returns: The return type for the accepted RecipientRef from `fn`
     /// - Throws: A timeout error from the Inbox
-    func request<ReturnType>(
+    public func request<ReturnType>(
         retry: Int = 0,
         with fn: @escaping (Receiver<ReturnType>) -> ActorType.MessageType
     ) -> Deferred<ReturnType> {
@@ -84,7 +90,7 @@ extension Desolate {
     ///   - fn: Function to return a Message that accepts a RecipientRef
     /// - Returns: The return type for the accepted RecipientRef from `fn`
     /// - Throws: A timeout error from the Inbox
-    func request<ReturnType>(
+    public func request<ReturnType>(
         priority: TaskPriority?,
         retry: Int = 0,
         with fn: @escaping (Receiver<ReturnType>) -> ActorType.MessageType

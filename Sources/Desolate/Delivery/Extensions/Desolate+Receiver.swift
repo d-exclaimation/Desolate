@@ -10,12 +10,12 @@ import Foundation
 
 extension Desolate {
     /// Get the receiver from this Desolate
-    var ref: Receiver<ActorType.MessageType> {
+    public var ref: Receiver<ActorType.MessageType> {
         DesolateReceiver(of: innerActor)
     }
 
     /// Get a receiver from a AbstractDesolate with converter / mappers
-    func ref<ReceiverValueType>(_ mapper: @escaping (ReceiverValueType) -> ActorType.MessageType) -> Receiver<ReceiverValueType> {
+    public func ref<ReceiverValueType>(_ mapper: @escaping (ReceiverValueType) -> ActorType.MessageType) -> Receiver<ReceiverValueType> {
         PipeableReceiver(of: innerActor, mapper: mapper)
     }
 }

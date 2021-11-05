@@ -76,4 +76,9 @@ public struct Nozzle<Element>: Identifiable {
     internal init(_ desolate: Desolate<Current>) {
         self.desolate = desolate
     }
+
+    /// Stop the Nozzle
+    public func shutdown() {
+        desolate.tell(with: nil)
+    }
 }

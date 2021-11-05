@@ -9,7 +9,7 @@
 import Foundation
 
 /// A protocol used for adding API to Desolate of an AsyncCapsule
-internal protocol CapsuleInterface: Actor {
+public protocol CapsuleInterface: Actor {
     associatedtype Value
 
     init(state: Value)

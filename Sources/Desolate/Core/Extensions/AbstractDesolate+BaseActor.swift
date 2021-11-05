@@ -85,6 +85,4 @@ extension AbstractDesolate where Self: BaseActor {
     /// - Returns: A complete Desolate
     @available(*, deprecated, message: "Use `create` / `make` instead")
     public static func new() -> Desolate<Self> { Desolate(of: self.init()) }
-
-
 }

@@ -8,25 +8,25 @@
 
 import Foundation
 
-@propertyWrapper
-struct Desolated<Value> {
+/// Property wrapper attribute to automatically create a Desolated actor for a specific property
+@propertyWrapper public struct Desolated<Value> {
 
     private var innerHook: Desolate<AsyncCapsule<Value>>
     private let timeout: TimeInterval
     private let cache: InMemoryCache<Value>
 
-    var wrappedValue: Value {
+    public var wrappedValue: Value {
         get { cache.cache { try innerHook.get() } }
         set { innerHook.set(newValue) }
     }
 
-    init(wrappedValue: Value) {
+    public init(wrappedValue: Value) {
         innerHook = pocket { wrappedValue }
         timeout = 5.0
         cache = InMemoryCache<Value> { wrappedValue }
     }
 
-    init(wrappedValue: Value, timeout tm: TimeInterval, fallback fb: @escaping () -> Value) {
+    public init(wrappedValue: Value, timeout tm: TimeInterval, fallback fb: @escaping () -> Value) {
         innerHook = pocket { wrappedValue }
         timeout = tm
         cache = InMemoryCache<Value> { wrappedValue }

@@ -112,14 +112,14 @@ public actor Timer: AbstractDesolate, BaseActor, NonStop {
 }
 
 /// Set a delayed function given the duration in nanoseconds
-@discardableResult func setTimeout(delay: Nanoseconds, fn: @escaping Timer.Action) -> Desolate<Timer> {
+@discardableResult public func setTimeout(delay: Nanoseconds, fn: @escaping Timer.Action) -> Desolate<Timer> {
     let timer = Timer.make()
     timer.timeout(delay: delay, fn: fn)
     return timer
 }
 
 /// Set a delayed function given the duration in nanoseconds
-@discardableResult func setInterval(delay: Nanoseconds, fn: @escaping Timer.Action) -> Desolate<Timer> {
+@discardableResult public func setInterval(delay: Nanoseconds, fn: @escaping Timer.Action) -> Desolate<Timer> {
     let timer = Timer.make()
     timer.interval(delay: delay, fn: fn)
     return timer
