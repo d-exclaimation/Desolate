@@ -36,6 +36,7 @@ extension Desolate {
                 return res
             } catch {
                 retriesLeft -= 1
+                await Task.requeue()
             }
         }
         throw AskPatternError(retries: retry)
@@ -62,6 +63,7 @@ extension Desolate {
                 return res
             case .failure(_):
                 retriesLeft -= 1
+                await Task.requeue()
             }
         }
 

@@ -15,7 +15,12 @@ final class StreamingTests: XCTestCase {
         try await unit("Nozzle should be a cold stream") { e async in
             let expected = [1, 2, 3]
             var result = [Int]()
-            let nozzle = Nozzle.array(expected)
+            let nozzle = Nozzle<Int>.init { emit, close async in
+                for i in expected {
+                    await emit(i)
+                }
+                await close()
+            }
 
             for await each in nozzle {
                 result.append(each)

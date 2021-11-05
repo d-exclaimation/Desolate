@@ -31,7 +31,7 @@ extension Nozzle: AsyncSequence {
                 if let next = await current.next() {
                     return next
                 }
-                await Task.sleep(5.milliseconds)
+                await Task.requeue()
             }
             return nil
         }

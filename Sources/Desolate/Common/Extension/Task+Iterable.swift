@@ -10,26 +10,26 @@ import Foundation
 
 extension Deferred {
     /// Mapping function
-    typealias MapFunc<U> = (Success) -> U
+    public typealias MapFunc<U> = (Success) -> U
 
     /// Creates a new Task by applying a function to the successful result of this task.
-    func map<U>(_ fn: @escaping MapFunc<U>) -> Deferred<U> {
+    public func map<U>(_ fn: @escaping MapFunc<U>) -> Deferred<U> {
         deferred { fn(try await value) }
     }
 
     /// FlatMapping async function
-    typealias AsyncMapFunc<U> = (Success) async -> U
+    public typealias AsyncMapFunc<U> = (Success) async -> U
 
     /// Creates a new Task by applying a function to the successful result of this task, and returns the result of the function as the new task.
-    func flatMap<U>(_ fn: @escaping AsyncMapFunc<U>) -> Deferred<U> {
+    public func flatMap<U>(_ fn: @escaping AsyncMapFunc<U>) -> Deferred<U> {
         deferred { await fn(try await value) }
     }
 
     /// FlatMapping function
-    typealias FlatMapFunc<U, F: Error> = (Success) -> Task<U, F>
+    public typealias FlatMapFunc<U, F: Error> = (Success) -> Task<U, F>
 
     /// Creates a new Task by applying a function to the successful result of this task, and returns the result of the function as the new task.
-    func flatMap<U, F: Error>(_ mapper: @escaping FlatMapFunc<U, F>) -> Deferred<U> {
+    public func flatMap<U, F: Error>(_ mapper: @escaping FlatMapFunc<U, F>) -> Deferred<U> {
         deferred { try await mapper(try await value).value }
     }
 }

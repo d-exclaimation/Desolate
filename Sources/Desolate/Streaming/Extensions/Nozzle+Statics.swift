@@ -77,4 +77,39 @@ extension Nozzle {
         let desolate = Nozzle.Current.create()
         return (Nozzle.init(desolate), desolate)
     }
+
+
+    /// Emitting builder function
+    public typealias Emit = (Element) async -> Void
+
+    /// Closing builder function
+    public typealias Close = () async -> Void
+
+    /// Builder function
+    public typealias Builder = (Emit, Close) async throws -> Void
+
+    /// Convenience initializer using the Builder
+    ///
+    /// ```swift
+    /// let nozzle = Nozzle { (emit, close) async in
+    ///     for i in 0...10 {
+    ///         await Task.sleep(1000)
+    ///         await emit(i)
+    ///     }
+    ///     await close()
+    /// }
+    /// ```
+    ///
+    /// - Parameter builder: Builder function
+    public init(_ builder: @escaping Builder) {
+        let curr = Nozzle.Current.create()
+        let emit: Emit = { elem in await curr.task(with: elem) }
+        let close: Close = { await curr.task(with: nil) }
+        defer {
+            Task.init {
+                try await builder(emit, close)
+            }
+        }
+        self.init(curr)
+    }
 }

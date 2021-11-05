@@ -41,6 +41,7 @@ public struct Nozzle<Element>: Identifiable {
 
     public let id: UUID = UUID()
 
+    /// Current flow of this Nozzle
     public actor Current: AbstractDesolate, BaseActor {
         public var status: Signal = .running
 

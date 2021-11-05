@@ -10,7 +10,7 @@ import Foundation
 
 extension Optional {
     /// Check whether an Optional is defined
-    var isSome: Bool {
+    public var isSome: Bool {
         if case .none = self {
             return false
         }
@@ -19,5 +19,5 @@ extension Optional {
     }
 
     /// Check whether an Optional is not defined
-    var isNone: Bool { !isSome }
+    public var isNone: Bool { !isSome }
 }

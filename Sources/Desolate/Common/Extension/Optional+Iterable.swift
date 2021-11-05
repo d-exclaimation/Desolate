@@ -11,7 +11,7 @@ import Foundation
 extension Optional {
 
     /// Map the wrapped value of the optional
-    func map<U>(_ fn: @escaping (Wrapped) -> U) -> Optional<U> {
+    public func map<U>(_ fn: @escaping (Wrapped) -> U) -> Optional<U> {
         switch self {
         case .none:
             return .none
@@ -21,7 +21,7 @@ extension Optional {
     }
 
     /// Map the wrapped value of the optional and flatten it
-    func flatMap<U>(_ fn: @escaping (Wrapped) -> Optional<U>) -> Optional<U> {
+    public func flatMap<U>(_ fn: @escaping (Wrapped) -> Optional<U>) -> Optional<U> {
         switch self {
         case .none:
             return .none
