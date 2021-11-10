@@ -9,7 +9,6 @@
 import Foundation
 
 extension Int {
-
     /// Self seconds into a Nanosecond unit
     var seconds: Nanoseconds { milliseconds * 1000 }
 

@@ -36,21 +36,24 @@ extension AbstractDesolate {
         }
     }
 
-    /// Method for handling Task within a Behavior `onMessage` using the `pipe pattern`
-    ///
-    /// - Parameters:
-    ///   - task: Task being executed / awaited
-    ///   - mapTo: Mapping function to transform result into the behavior message type
-    public func pipeToSelf<Success, Failure>(_ task: Task<Success, Failure>, mapTo: (Result<Success, Failure>) -> MessageType) async {
-        let res = await task.result
-        await receive(mapTo(res))
-    }
-
     /// The identity of this Actor, bound to the lifecycle of this Actor instance.
     /// An Actor with the same name that lives before or after this instance will have a different Desolate.
     ///
     /// This field is thread-safe and can be called from other threads than the ordinary actor message processing thread, such as `async` or `Task` callbacks.
     public var oneself: Desolate<Self> {
         Desolate(of: self)
+    }
+
+    /// Spawn a new Desolate actor
+    ///
+    /// - Parameter actor: Actor being spawned
+    /// - Returns: A Desolated actor of this same type
+    public func spawn<ActorType: AbstractDesolate>(_ actor: ActorType) -> Desolate<ActorType> {
+        Desolate(of: actor)
+    }
+
+    /// Log a custom message into the standard output
+    public func log(_ msg: CustomStringConvertible...) {
+        print("[\(Date().ISO8601Format())]: \(msg.map { $0.description }.joined(separator: " "))")
     }
 }

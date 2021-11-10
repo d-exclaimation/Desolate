@@ -10,6 +10,17 @@ import Foundation
 
 extension Hourglasses where ActorType == TimerGroup {
 
+    /// Set a delayed function given the duration in seconds and return an UUID for cancelling
+    public func timeout(interval: TimeInterval, fn: @escaping Timer.Action) -> UUID {
+        timeout(delay: interval.nanoseconds, fn: fn)
+    }
+
+    /// Set a repeated function given the duration in seconds and return an UUID for cancelling
+    public func interval(interval: TimeInterval, fn: @escaping Timer.Action) -> UUID {
+        self.interval(delay: interval.nanoseconds, fn: fn)
+    }
+
+
     /// Set a delayed function given the duration in nanoseconds and return an UUID for cancelling
     public func timeout(delay: Nanoseconds, fn: @escaping Timer.Action) -> UUID {
         let res = conduit(timeout: 2.0) {
