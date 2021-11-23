@@ -89,4 +89,81 @@ final class StreamingTests: XCTestCase {
         await desolate.task(with: (3,  streamDesolate.ref { .next("\($0)") }))
         let _ = await task.result
     }
+
+    func testBenchmark() async throws {
+        let repeated = 10
+        let task0 = Task.init { () -> (TimeInterval, Int) in
+            await withTaskGroup(of: (TimeInterval, Int).self, returning: (TimeInterval, Int).self) { group in
+                for i in 1...repeated {
+                    group.addTask {
+                        let (nozzle, desolate) = Nozzle<Int>.desolate()
+                        Task.init {
+                            for i in 0...(i * i * i) {
+                                await desolate.task(with: i)
+                                await Task.requeue()
+                            }
+                            await desolate.task(with: nil)
+                        }
+                        let start = Date()
+                        var all = 0
+                        for await _ in nozzle {
+                            all += 1
+                        }
+                        return (abs(start.timeIntervalSinceNow * 1000), all)
+                    }
+                }
+
+                var speeds = [TimeInterval]()
+                var accuracies = [Int]()
+                for await res in group {
+                    let (speed, accuracy) = res
+                    speeds.append(speed)
+                    accuracies.append(100 - abs(101 - accuracy) / 101 * 100)
+                }
+
+                return (speeds.reduce(0.0) { acc, x in acc + x } / Double(speeds.count), accuracies.reduce(0) { acc, x in acc + x } / accuracies.count)
+            }
+
+        }
+
+        let task1 = Task.init { () -> (TimeInterval, Int) in
+            await withTaskGroup(of: (TimeInterval, Int).self, returning: (TimeInterval, Int).self) { group in
+                for i in 1...repeated {
+                    group.addTask {
+                        let asyncStream = AsyncStream.init(Int.self) { continuation in
+                            Task.init {
+                                for i in 0...(i * i * i) {
+                                    continuation.yield(i)
+                                    await Task.requeue()
+                                }
+                                continuation.finish()
+                            }
+                        }
+
+                        let start = Date()
+                        var all = 0
+                        for await _ in asyncStream {
+                            all += 1
+                        }
+                        return (abs(start.timeIntervalSinceNow * 1000), all)
+                    }
+                }
+
+                var speeds = [TimeInterval]()
+                var accuracies = [Int]()
+                for await res in group {
+                    let (speed, accuracy) = res
+                    speeds.append(speed)
+                    accuracies.append(100 - abs(101 - accuracy) / 101 * 100)
+                }
+
+                return (speeds.reduce(0.0) { acc, x in acc + x } / Double(speeds.count), accuracies.reduce(0) { acc, x in acc + x } / accuracies.count)
+            }
+        }
+
+        let (nozzle, acc0) = await task0.value
+        let (stream, acc1) = await task1.value
+        print("Nozzle is about \((nozzle / stream * 100).rounded())% the speed of stream with accuracy of \(100 - abs(101 - acc0) / 101 * 100)%")
+        print("Stream is about \((stream / nozzle * 100).rounded())% the speed of nozzle with accuracy of \(100 - abs(101 - acc1) / 101 * 100)%")
+    }
 }
