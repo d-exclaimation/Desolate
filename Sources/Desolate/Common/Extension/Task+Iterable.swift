@@ -29,8 +29,8 @@ extension Deferred {
     public typealias FlatMapFunc<U, F: Error> = (Success) -> Task<U, F>
 
     /// Creates a new Task by applying a function to the successful result of this task, and returns the result of the function as the new task.
-    public func flatMap<U, F: Error>(_ mapper: @escaping FlatMapFunc<U, F>) -> Deferred<U> {
-        deferred { try await mapper(try await value).value }
+    public func flatMap<U, F: Error>(_ transform: @escaping FlatMapFunc<U, F>) -> Deferred<U> {
+        deferred { try await transform(try await value).value }
     }
 }
 

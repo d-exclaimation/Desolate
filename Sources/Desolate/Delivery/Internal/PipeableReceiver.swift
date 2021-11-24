@@ -12,11 +12,11 @@ import Foundation
 internal class PipeableReceiver<ValueType, ActorType: AbstractDesolate>: Receiver<ValueType> {
     /// inner actors of the reference
     internal let innerActor: ActorType
-    internal let mapper: (ValueType) -> ActorType.MessageType
+    internal let transform: (ValueType) -> ActorType.MessageType
 
-    public init(of ref: ActorType, mapper fn: @escaping (ValueType) -> ActorType.MessageType) {
+    public init(of ref: ActorType, transform fn: @escaping (ValueType) -> ActorType.MessageType) {
         innerActor = ref
-        mapper = fn
+        transform = fn
     }
 
     /// Send a message to the Actor referenced by this Desolate
@@ -24,7 +24,7 @@ internal class PipeableReceiver<ValueType, ActorType: AbstractDesolate>: Receive
     ///
     /// - Parameter msg: Message to be sent
     public override func tell(with msg: ValueType) {
-        Task.init { await innerActor.receive(mapper(msg)) }
+        Task.init { await innerActor.receive(transform(msg)) }
     }
 
     /// Asynchronously send a message to the Actor referenced by this Desolate using *at-most-once* messaging semantics.
@@ -32,7 +32,7 @@ internal class PipeableReceiver<ValueType, ActorType: AbstractDesolate>: Receive
     /// - Parameter msg: Message to be sent:
     public override func task(with msg: ValueType) async {
         let task = Task {
-            await innerActor.receive(mapper(msg))
+            await innerActor.receive(transform(msg))
         }
         await task.value
     }

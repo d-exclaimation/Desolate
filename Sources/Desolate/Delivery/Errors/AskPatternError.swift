@@ -15,13 +15,6 @@ public struct AskPatternError: Error {
 
     /// Localized description for the error message
     var localizedDescription: String {
-        NSError(
-           domain: "Desolate.Delivery",
-           code: 200,
-           userInfo: [
-               "Error reason": "Ask pattern retry exhausted, no value given",
-               "Retries": "\(retries)"
-           ]
-        ).localizedDescription
+        "Didn't receive response within the allowed amount of retries / timeout, retries count: \(retries)"
     }
 }

@@ -12,21 +12,17 @@ extension Optional {
 
     /// Map the wrapped value of the optional
     public func map<U>(_ fn: @escaping (Wrapped) -> U) -> Optional<U> {
-        switch self {
-        case .none:
+        guard case .some(let wrapped) = self else {
             return .none
-        case .some(let wrapped):
-            return .some(fn(wrapped))
         }
+        return .some(fn(wrapped))
     }
 
     /// Map the wrapped value of the optional and flatten it
     public func flatMap<U>(_ fn: @escaping (Wrapped) -> Optional<U>) -> Optional<U> {
-        switch self {
-        case .none:
+        guard case .some(let wrapped) = self else {
             return .none
-        case .some(let wrapped):
-            return fn(wrapped)
         }
+        return fn(wrapped)
     }
 }

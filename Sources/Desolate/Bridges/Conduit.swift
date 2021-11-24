@@ -17,10 +17,10 @@ public typealias AsyncFailable<ReturnType> = () async throws -> ReturnType
 /// Bridge a async block to a non async one and pass the result
 ///
 /// - Parameters:
-///   - dur: Timeout duration.
+///   - timeout: Timeout duration.
 ///   - operation: Asynchronous function that return the proper value
 /// - Returns: Result of the Successful value or a BridgeError
-public func conduit<Success>(timeout dur: TimeInterval, for operation: @escaping Async<Success>) -> Result<Success, CollapsedBridge> {
+public func conduit<Success>(within timeout: TimeInterval, for operation: @escaping Async<Success>) -> Result<Success, CollapsedBridge> {
     let capsule = MutexCapsule<Success>()
 
     func closure() async {
@@ -28,7 +28,7 @@ public func conduit<Success>(timeout dur: TimeInterval, for operation: @escaping
         await capsule.task(with: res)
     }
 
-    switch bridge(timeout: dur, for: closure) {
+    switch bridge(within: timeout, for: closure) {
     case .success(_):
         if let succ = try? capsule.acquire() {
             return .success(succ)
@@ -42,10 +42,10 @@ public func conduit<Success>(timeout dur: TimeInterval, for operation: @escaping
 /// Bridge a async block to a non async one and pass the result
 ///
 /// - Parameters:
-///   - dur: Timeout duration.
+///   - timeout: Timeout duration.
 ///   - operation: Asynchronous function that return another Result
 /// - Returns: Flatten Result with transformed error
-public func conduit<Success, Failure: Error>(timeout dur: TimeInterval, under operation: @escaping Async<Result<Success, Failure>>) -> Result<Success, CollapsedBridge> {
+public func conduit<Success, Failure: Error>(within timeout: TimeInterval, under operation: @escaping Async<Result<Success, Failure>>) -> Result<Success, CollapsedBridge> {
     let capsule = MutexCapsule<Result<Success, CollapsedBridge>>()
 
     func closure() async {
@@ -59,7 +59,7 @@ public func conduit<Success, Failure: Error>(timeout dur: TimeInterval, under op
         }
     }
 
-    switch bridge(timeout: dur, for: closure) {
+    switch bridge(within: timeout, for: closure) {
     case .success(_):
         if let res = try? capsule.acquire() {
             return res
@@ -73,10 +73,10 @@ public func conduit<Success, Failure: Error>(timeout dur: TimeInterval, under op
 /// Bridge a async block to a non async one and pass the result
 ///
 /// - Parameters:
-///   - dur: Timeout duration.
+///   - timeout: Timeout duration.
 ///   - operation: Asynchronous function that return the proper value or throw error
 /// - Returns: Result of the Successful value or a BridgeError
-public func conduit<Success>(timeout dur: TimeInterval, for operation: @escaping AsyncFailable<Success>) -> Result<Success, CollapsedBridge> {
+public func conduit<Success>(within timeout: TimeInterval, for operation: @escaping AsyncFailable<Success>) -> Result<Success, CollapsedBridge> {
     let capsule = MutexCapsule<Result<Success, CollapsedBridge>>()
 
     func closure() async throws {
@@ -88,7 +88,7 @@ public func conduit<Success>(timeout dur: TimeInterval, for operation: @escaping
         }
     }
 
-    switch bridge(timeout: dur, throw: closure) {
+    switch bridge(within: timeout, throw: closure) {
     case .success():
         if let res = try? capsule.acquire() {
             return res

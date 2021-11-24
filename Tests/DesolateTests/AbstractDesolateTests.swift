@@ -46,7 +46,7 @@ final class AbstractDesolateTests: XCTestCase {
     func testConduit() throws {
         func asyncCode() async -> Int { 1 }
         try unit("Conduit should not create data race and allow bridging the async value to the sync block") { e in
-            let res = conduit(timeout: 1.0) {
+            let res = conduit(within: 1.0) {
                 await asyncCode()
             }
 

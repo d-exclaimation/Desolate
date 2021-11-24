@@ -49,7 +49,7 @@ public func bridge(for operation: @escaping AsyncFunction) {
 /// ```
 ///
 /// - Parameter operation: Asynchronous throwing function closure.
-public func bridge(throw operation: @escaping AsyncThrowFunction) {
+public func bridge(catching operation: @escaping AsyncThrowFunction) {
     let group = DispatchGroup()
     group.enter()
     Task {
@@ -66,14 +66,14 @@ public func bridge(throw operation: @escaping AsyncThrowFunction) {
 ///
 /// ```swift
 /// let timeout = DispatchTime.now() + DispatchTimeInterval.seconds(1)
-/// try bridge(timeout: timeout) {
+/// try bridge(within: timeout) {
 ///     async let res = asyncFunction()
 ///     await print(res)
 /// }
 /// ```
 ///
 /// - Parameter operation: Asynchronous function closure.
-@discardableResult public func bridge(timeout: TimeInterval, for operation: @escaping AsyncFunction) -> Result<Void, CollapsedBridge> {
+@discardableResult public func bridge(within timeout: TimeInterval, for operation: @escaping AsyncFunction) -> Result<Void, CollapsedBridge> {
     let group = DispatchGroup()
     group.enter()
     Task {
@@ -97,14 +97,14 @@ public func bridge(throw operation: @escaping AsyncThrowFunction) {
 ///
 /// ```swift
 /// let timeout = DispatchTime.now() + DispatchTimeInterval.seconds(1)
-/// try bridge(timeout: timeout) {
+/// try bridge(within: timeout) {
 ///     async let res = asyncFunction()
 ///     await print(res)
 /// }
 /// ```
 ///
 /// - Parameter operation: Asynchronous function closure.
-@discardableResult public func bridge(timeout: TimeInterval, throw operation: @escaping AsyncThrowFunction) -> Result<Void, CollapsedBridge> {
+@discardableResult public func bridge(within timeout: TimeInterval, throw operation: @escaping AsyncThrowFunction) -> Result<Void, CollapsedBridge> {
     let group = DispatchGroup()
     group.enter()
     Task.init(priority: nil) {
@@ -127,14 +127,14 @@ public func bridge(throw operation: @escaping AsyncThrowFunction) {
 ///
 /// ```swift
 /// let timeout = DispatchTime.now() + DispatchTimeInterval.seconds(1)
-/// try bridge(timeout: timeout) {
+/// try bridge(within: timeout) {
 ///     async let res = asyncFunction()
 ///     await print(res)
 /// }
 /// ```
 ///
 /// - Parameter operation: Asynchronous function closure.
-@discardableResult public func bridge(priority: TaskPriority?, timeout: TimeInterval, throw operation: @escaping AsyncThrowFunction) -> Result<Void, CollapsedBridge> {
+@discardableResult public func bridge(priority: TaskPriority?, within timeout: TimeInterval, throw operation: @escaping AsyncThrowFunction) -> Result<Void, CollapsedBridge> {
     let group = DispatchGroup()
     group.enter()
     Task.init(priority: priority) {

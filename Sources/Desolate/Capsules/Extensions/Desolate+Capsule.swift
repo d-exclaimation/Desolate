@@ -12,7 +12,7 @@ extension Desolate where ActorType: CapsuleInterface  {
 
     /// Get and wait from am AsyncCapsule
     public func get(timeout: TimeInterval = 5.0) throws -> ActorType.Value where ActorType.MessageType == AsyncCapsule<ActorType.Value>.Intent {
-        let res = conduit(timeout: timeout) { try await ask { .get(ref: $0) } }
+        let res = conduit(within: timeout) { try await ask { .get(with: $0) } }
         switch res {
         case .success(let val):
             return val
@@ -23,7 +23,7 @@ extension Desolate where ActorType: CapsuleInterface  {
 
     /// Get asynchronous from an AsyncCapsule
     public func get() async throws -> ActorType.Value where ActorType.MessageType == AsyncCapsule<ActorType.Value>.Intent {
-        try await ask { .get(ref: $0) }
+        try await ask { .get(with: $0) }
     }
 
     /// Set and not wait from an AsyncCapsule

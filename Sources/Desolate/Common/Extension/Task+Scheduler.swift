@@ -23,10 +23,10 @@ extension Task where Success == Never, Failure == Never {
     }
 
     /// Push back execution of the callback of the code back to the end of the running executor queue.
-    public static func nextLoop(throwing: @escaping AsyncThrowFunction) {
+    public static func nextLoop(catching: @escaping AsyncThrowFunction) {
         Task<Void, Never>.init {
             await Task<Never, Never>.sleep(0)
-            try? await throwing()
+            try? await catching()
         }
     }
 }

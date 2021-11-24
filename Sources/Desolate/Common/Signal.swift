@@ -12,7 +12,7 @@ import Foundation
 /// ```swift
 /// enum CounterActions {
 ///     case increment, decrement, stop
-///     case get(ref: Receiver<Int>)
+///     case get(with: Receiver<Int>)
 /// }
 /// actor Counter: AbstractDesolate actor {
 ///     var status: Signal = .running

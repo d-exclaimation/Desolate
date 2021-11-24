@@ -15,7 +15,7 @@ public actor AsyncCapsule<Value>: AbstractDesolate, CapsuleInterface, NonStop {
     /// Capsule Intent to handle  getter and setter
     @frozen public enum Intent {
         /// Getter
-        case get(ref: Receiver<Value>)
+        case get(with: Receiver<Value>)
 
         /// Setter
         case set(new: Value)
@@ -32,7 +32,7 @@ public actor AsyncCapsule<Value>: AbstractDesolate, CapsuleInterface, NonStop {
 
     public func onMessage(msg: Intent) async -> Signal {
         switch msg {
-        case .get(ref: let ref):
+        case .get(with: let ref):
             ref.tell(with: safeState)
         case .set(new: let new):
             safeState = new
