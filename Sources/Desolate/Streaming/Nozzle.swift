@@ -65,7 +65,7 @@ public struct Nozzle<Element>: Identifiable {
 
         internal func ongoing() async -> Bool {
             // Ongoing -> Not ended or is still filled
-            status != .stopped || buffer.count > 0
+            status != .stopped || !buffer.isEmpty
         }
 
         public init() {}
