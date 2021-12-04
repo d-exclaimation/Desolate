@@ -166,4 +166,33 @@ final class StreamingTests: XCTestCase {
         print("Nozzle is about \((nozzle / stream * 100).rounded())% the speed of stream with accuracy of \(100 - abs(101 - acc0) / 101 * 100)%")
         print("Stream is about \((stream / nozzle * 100).rounded())% the speed of nozzle with accuracy of \(100 - abs(101 - acc1) / 101 * 100)%")
     }
+
+    func testOnTermination() async throws {
+        let (nozzle, engine) = Nozzle<Int>.desolate()
+        let expect = XCTestExpectation(description: "On termination should be called")
+        nozzle.onTermination {
+            expect.fulfill()
+            print("Done")
+        }
+
+        Task.init {
+            for await each in nozzle {
+                print("\(each)")
+            }
+        }
+
+        Task.init {
+           await Task.sleep(1000 * 1000 * 200)
+            nozzle.shutdown()
+        }
+
+        Task.init {
+            for i in 0...1000 {
+                await engine.task(with: i)
+                await Task.sleep(1000 * 1000 * 10)
+            }
+        }
+
+        wait(for: [expect], timeout: 1)
+    }
 }

@@ -16,6 +16,9 @@ extension Jet {
         let (nozzle, flow) = Nozzle<Element>.desolate()
         defer {
             desolate.tell(with: .attach(id: nozzle.id, flow: flow))
+            nozzle.onTermination {
+                desolate.tell(with: .detach(id: nozzle.id))
+            }
         }
         return nozzle
     }

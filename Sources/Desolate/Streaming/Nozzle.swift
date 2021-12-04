@@ -47,9 +47,11 @@ public struct Nozzle<Element>: Identifiable {
 
         /// Temporarily storage
         private var buffer: [Element] = []
+        private var onTermination: (() -> Void)? = nil
 
         public func onMessage(msg: Element?) async -> Signal {
             guard let msg = msg else {
+                onTermination?()
                 return .stopped
             }
 
@@ -68,6 +70,17 @@ public struct Nozzle<Element>: Identifiable {
             status != .stopped || !buffer.isEmpty
         }
 
+        internal func setTermination(_ fn: @escaping () -> Void) async {
+            if let termination = onTermination {
+                onTermination = .some {
+                    termination()
+                    fn()
+                }
+            } else {
+                onTermination = .some(fn)
+            }
+        }
+
         public init() {}
     }
 
@@ -81,5 +94,12 @@ public struct Nozzle<Element>: Identifiable {
     /// Stop the Nozzle
     public func shutdown() {
         desolate.tell(with: nil)
+    }
+
+    /// Set on Termination callback to deallocate resources if necessary
+    public func onTermination(_ fn: @escaping () -> Void) {
+        Task.init {
+            await desolate.innerActor.setTermination(fn)
+        }
     }
 }
