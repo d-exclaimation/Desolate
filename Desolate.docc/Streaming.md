@@ -24,11 +24,11 @@ This protocol defines a new standard and the base for building streaming data st
 ``Desolate`` comes with one built-in, ``Desolate/Nozzle``, which is a general purpose cold observable stream (cold as in it creates a data producer for each subscriber, when subscribed not before). It also come with multiple ways of initializing (and more coming soon).
 
 ```swift
-let collectionNuzz: Nozzle<Int> = Nozzle.of(1, 2, 3, 4, 5, 6, 7) 
+let collectionNozzle: Nozzle<Int> = Nozzle.of(1, 2, 3, 4, 5, 6, 7) 
 
 Task.detached {
     // Start consuming
-    for await each in collectionNuzz {
+    for await each in collectionNozzle {
         print(each)
     }    
 }
@@ -39,25 +39,25 @@ Task.detached {
 ``Desolate/Nozzle`` is built with Swift Actors and leverage Desolate capabilities to create a robust and efficient stream. You can see that by using ``Desolate/Nozzle/desolate()`` initializer.
 
 ```swift
-let (nuzz, desolate) = Nozzle<Int>.desolate()
+let (nozzle, sink) = Nozzle<Int>.desolate()
 
 Task.init {
     // Start consuming
-    for await each in nuzz {
+    for await each in nozzle {
         print("Received \(each)")
     }    
 }
 
-desolate.tell(with: 10)
+sink.tell(with: 10)
 // Received 10
-desolate.tell(with: 69)
+sink.tell(with: 69)
 // Received 69
 ```
 
-``Desolate/Nozzle`` are cold which may not be suitable for situation where there are dynamic incoming data and multiple maybe dynamic amount of consumer / subscriber. This is where ``Desolate/Jet`` comes in which basically a hot obserable implementation.
+``Desolate/Nozzle`` are cold which may not be suitable for situation where there are dynamic incoming data and multiple maybe dynamic amount of consumer / subscriber. This is where ``Desolate/Source`` comes in which basically a hot observable implementation.
 
 ```swift
-let (jet, upstream) = Jet<Int>.desolate()
+let (source, supply) = Source<Int>.desolate()
 
 Task.init {
     await withTaskGroup(of: Void.self) { group in 
@@ -65,14 +65,14 @@ Task.init {
         for i in 0..<3 {
             group.addTask {
                 // Compute a new Nuzzle for each consumer
-                for await each in jet.nozzle() {
+                for await each in source.nozzle() {
                     print("\(i): Received \(each)")
                 }    
             }
         }
     }
 }
-upstream.tell(with: .next(10))
+supply.tell(with: .next(10))
 // 0: Received 10
 // 2: Received 10
 // 1: Received 10

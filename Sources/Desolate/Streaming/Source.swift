@@ -9,39 +9,39 @@
 import Foundation
 
 /// A Hot broadcast stream implementation using Desolated actors, that can easily create multiple ``Desolate/Nozzle``
-public struct Jet<Element> {
-    public typealias Flow = Desolate<Nozzle<Element>.Current>
+public struct Source<Element>: Sendable {
+    public typealias Sink = Desolate<Nozzle<Element>.Sink>
 
-    /// Actor to distribute to multiple Flows
-    public actor Pipeline: AbstractDesolate, BaseActor {
+    /// Actor to distribute to multiple Sinks
+    public actor Supply: AbstractDesolate, BaseActor {
         /// All actions for the Queue
         public enum Act {
             case next(Element), complete
-            case attach(id: UUID, flow: Flow), detach(id: UUID)
+            case attach(id: UUID, sink: Sink), detach(id: UUID)
         }
 
         public var status: Signal = .running
 
         /// Temporarily storage
-        private var flows: [UUID: Flow] = [:]
+        private var sinks: [UUID: Sink] = [:]
 
         /// Interface for Desolate
         public func onMessage(msg: Act) async -> Signal {
             switch msg {
             case .next(let message):
-                for nozzle in flows.values {
+                for nozzle in sinks.values {
                     await nozzle.task(with: message)
                 }
             case .complete:
-                for queue in flows.values {
+                for queue in sinks.values {
                     await queue.task(with: nil)
                 }
-                flows.removeAll()
+                sinks.removeAll()
                 return .stopped
             case .attach(let id, let nozzle):
-                flows[id] = nozzle
+                sinks[id] = nozzle
             case .detach(id: let id):
-                flows.removeValue(forKey: id)
+                sinks.removeValue(forKey: id)
             }
             return .running
         }
@@ -49,14 +49,14 @@ public struct Jet<Element> {
         public init() {}
     }
 
-    /// The desolated ``Desolate/Jet/Hub`` actor
-    internal let desolate: Desolate<Pipeline>
+    /// The desolated ``Desolate/Source/Supply`` actor
+    internal let desolate: Desolate<Supply>
 
-    internal init(_ engine: Desolate<Pipeline>) {
+    internal init(_ engine: Desolate<Supply>) {
        desolate = engine
     }
 
     public init() {
-        desolate = Pipeline.create()
+        desolate = Supply.create()
     }
 }

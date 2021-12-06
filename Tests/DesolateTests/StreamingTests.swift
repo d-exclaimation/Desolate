@@ -15,11 +15,11 @@ final class StreamingTests: XCTestCase {
         try await unit("Nozzle should be a cold stream") { e async in
             let expected = [1, 2, 3]
             var result = [Int]()
-            let nozzle = Nozzle<Int>.init { emit, close async in
+            let nozzle = Nozzle<Int> { pipe async in
                 for i in expected {
-                    await emit(i)
+                    await pipe.emit(i)
                 }
-                await close()
+                await pipe.close()
             }
 
             for await each in nozzle {
@@ -35,8 +35,8 @@ final class StreamingTests: XCTestCase {
         }
     }
 
-    func testJet() async {
-        let (stream, desolate) = Jet<Int>.desolate()
+    func testSource() async {
+        let (stream, desolate) = Source<Int>.desolate()
         let job = Task {
             for await each in stream.nozzle().map({ "Task.init -> \($0)" }) {
                 print(each)
@@ -69,9 +69,9 @@ final class StreamingTests: XCTestCase {
         }
     }
 
-    func testJetUsingReceiver() async {
+    func testSourceUsingReceiver() async {
         let desolate = Procrastinator.create()
-        let (stream, streamDesolate) = Jet<String>.desolate()
+        let (stream, streamDesolate) = Source<String>.desolate()
 
         let task = Task.detached {
             var last = 0

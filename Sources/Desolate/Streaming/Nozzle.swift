@@ -42,7 +42,7 @@ public struct Nozzle<Element>: Identifiable {
     public let id: UUID = UUID()
 
     /// Current flow of this Nozzle
-    public actor Current: AbstractDesolate, BaseActor {
+    public actor Sink: AbstractDesolate, BaseActor {
         public var status: Signal = .running
 
         /// Temporarily storage
@@ -84,10 +84,10 @@ public struct Nozzle<Element>: Identifiable {
         public init() {}
     }
 
-    /// The desolated ``Desolate/Nozzle/Current`` actor
-    internal let desolate: Desolate<Current>
+    /// The desolated ``Desolate/Nozzle/Sink`` actor
+    internal let desolate: Desolate<Sink>
 
-    internal init(_ desolate: Desolate<Current>) {
+    internal init(_ desolate: Desolate<Sink>) {
         self.desolate = desolate
     }
 
