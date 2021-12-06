@@ -13,7 +13,7 @@ extension Nozzle {
     ///
     /// - Returns: Nozzle
     public static func empty() -> Nozzle<Element> {
-        let desolate = Nozzle.Current.create()
+        let desolate = Nozzle.Sink.create()
         defer {
             desolate.tell(with: nil)
         }
@@ -25,7 +25,7 @@ extension Nozzle {
     /// - Parameter just: The only value given
     /// - Returns: Nozzle
     public static func single(_ just: Element) -> Nozzle<Element> {
-        let desolate = Nozzle.Current.create()
+        let desolate = Nozzle.Sink.create()
         defer {
             Task.init {
                 await desolate.task(with: just)
@@ -40,7 +40,7 @@ extension Nozzle {
     /// - Parameter elements: Finite elements
     /// - Returns: Nozzle
     public static func of(_ elements: Element...) -> Nozzle<Element> {
-        let desolate = Nozzle.Current.create()
+        let desolate = Nozzle.Sink.create()
         defer {
             Task.init {
                 for element in elements {
@@ -58,7 +58,7 @@ extension Nozzle {
     /// - Parameter elements: Array of elements
     /// - Returns: Nozzle
     public static func array(_ elements: [Element]) -> Nozzle<Element> {
-        let desolate = Nozzle.Current.create()
+        let desolate = Nozzle.Sink.create()
         defer {
             Task.init {
                 for element in elements {
@@ -73,43 +73,50 @@ extension Nozzle {
     /// Create a Nozzle from a Desolated current, and give both
     ///
     /// - Returns: A Nozzle and its Desolated current
-    public static func desolate() -> (Nozzle<Element>, Desolate<Current>) {
-        let desolate = Nozzle.Current.create()
+    public static func desolate() -> (Nozzle<Element>, Desolate<Sink>) {
+        let desolate = Nozzle.Sink.create()
         return (Nozzle.init(desolate), desolate)
     }
 
+    /// Nozzle's Pipe for adding values into Nozzle dynamically
+    public struct Pipe: Sendable {
+        internal let sink: Desolate<Sink>
 
-    /// Emitting builder function
-    public typealias Emit = (Element) async -> Void
+        /// Emit a value into the pipe and to the Nozzle
+        public func emit(_ element: Element) async {
+            await sink.task(with: element)
+        }
 
-    /// Closing builder function
-    public typealias Close = () async -> Void
+        /// End the data current, prevent any more values to be emitted
+        public func close() async {
+            await sink.task(with: .none)
+        }
+    }
 
     /// Builder function
-    public typealias Builder = (Emit, Close) async throws -> Void
+    public typealias Builder = (Pipe) async -> Void
 
     /// Convenience initializer using the Builder
     ///
     /// ```swift
-    /// let nozzle = Nozzle { (emit, close) async in
+    /// let nozzle = Nozzle { pipe async in
     ///     for i in 0...10 {
     ///         await Task.sleep(1000)
-    ///         await emit(i)
+    ///         await pipe.emit(i)
     ///     }
-    ///     await close()
+    ///     await pipe.close()
     /// }
     /// ```
     ///
     /// - Parameter builder: Builder function
     public init(_ builder: @escaping Builder) {
-        let curr = Nozzle.Current.create()
-        let emit: Emit = { elem in await curr.task(with: elem) }
-        let close: Close = { await curr.task(with: nil) }
+        let sink = Sink.create()
+        let pipe = Pipe(sink: sink)
         defer {
             Task.init {
-                try await builder(emit, close)
+                await builder(pipe)
             }
         }
-        self.init(curr)
+        self.init(sink)
     }
 }

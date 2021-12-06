@@ -71,7 +71,7 @@ import Foundation
 /// actions from asynchronous block or a synchronous one,
 /// while fully maintain actor isolation and its concurrent
 /// capabilities.
-public struct Desolate<ActorType> where ActorType: AbstractDesolate  {
+public struct Desolate<ActorType>: Sendable where ActorType: AbstractDesolate {
     /// inner actors of the reference
     internal var innerActor: ActorType
 

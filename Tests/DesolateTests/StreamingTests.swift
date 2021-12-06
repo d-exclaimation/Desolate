@@ -15,11 +15,11 @@ final class StreamingTests: XCTestCase {
         try await unit("Nozzle should be a cold stream") { e async in
             let expected = [1, 2, 3]
             var result = [Int]()
-            let nozzle = Nozzle<Int>.init { emit, close async in
+            let nozzle = Nozzle<Int> { pipe async in
                 for i in expected {
-                    await emit(i)
+                    await pipe.emit(i)
                 }
-                await close()
+                await pipe.close()
             }
 
             for await each in nozzle {
@@ -35,8 +35,8 @@ final class StreamingTests: XCTestCase {
         }
     }
 
-    func testJet() async {
-        let (stream, desolate) = Jet<Int>.desolate()
+    func testSource() async {
+        let (stream, desolate) = Source<Int>.desolate()
         let job = Task {
             for await each in stream.nozzle().map({ "Task.init -> \($0)" }) {
                 print(each)
@@ -69,9 +69,9 @@ final class StreamingTests: XCTestCase {
         }
     }
 
-    func testJetUsingReceiver() async {
+    func testSourceUsingReceiver() async {
         let desolate = Procrastinator.create()
-        let (stream, streamDesolate) = Jet<String>.desolate()
+        let (stream, streamDesolate) = Source<String>.desolate()
 
         let task = Task.detached {
             var last = 0
@@ -88,6 +88,104 @@ final class StreamingTests: XCTestCase {
         await desolate.task(with: (2,  streamDesolate.ref { .next("\($0)") }))
         await desolate.task(with: (3,  streamDesolate.ref { .next("\($0)") }))
         let _ = await task.result
+    }
+
+    func testReservoirWithNozzle() async throws {
+        let reservoir = Reservoir<String, Int>()
+        let e1 = XCTestExpectation(description: "Topic 1 receive 3 messages")
+        let e2 = XCTestExpectation(description: "Topic 1 receive 3 messages")
+        let nozzle1 = await reservoir.nozzle(for: "topic:1")
+        let nozzle2 = await reservoir.nozzle(for: "topic:1")
+        let nozzle3 = await reservoir.nozzle(for: "topic:2")
+
+        Task.detached {
+            var count = [Int]()
+            for await each in nozzle1 {
+                count.append(each)
+            }
+            if count.count == 3 {
+                e1.fulfill()
+            } else {
+                print("topic:1 -> \(count)")
+            }
+        }
+
+        Task.detached {
+            var count = [Int]()
+            for await each in nozzle2 {
+                count.append(each)
+            }
+            if count.count == 3 {
+                e2.fulfill()
+            } else {
+                print("topic:1 -> \(count)")
+            }
+        }
+
+        Task.detached {
+            var count = [Int]()
+            for await each in nozzle3 {
+                count.append(each)
+            }
+            if count.count == 2 {
+                e2.fulfill()
+            } else {
+                print("topic:2 -> \(count)")
+            }
+        }
+
+        await Task.sleep(100.milliseconds)
+
+        await reservoir.dispatch(for: "topic:1", 1)
+        await reservoir.dispatch(for: "topic:2", 2)
+        await reservoir.dispatch(for: "topic:2", 2)
+        await reservoir.dispatch(for: "topic:1", 3)
+        await reservoir.dispatch(for: "topic:1", 5)
+        reservoir.close(for: "topic:1")
+        reservoir.close(for: "topic:2")
+        wait(for: [e1, e2], timeout: 2)
+    }
+
+    func testReservoirWithSources() async throws {
+        let reservoir = Reservoir<String, Int>()
+        let e1 = XCTestExpectation(description: "Topic 1 receive 3 messages")
+        let e2 = XCTestExpectation(description: "Topic 2 receive 1 messages")
+        let source1 = await reservoir.source(for: "topic:1")
+        let source2 = await reservoir.source(for: "topic:2")
+
+        Task.detached {
+            var count = [Int]()
+            for await each in source1.nozzle() {
+                count.append(each)
+            }
+            if count.count == 3 {
+                e1.fulfill()
+            } else {
+                print("topic:1 -> \(count)")
+            }
+        }
+
+        Task.detached {
+            var count = [Int]()
+            for await each in source2.nozzle() {
+                count.append(each)
+            }
+            if count.count == 1 {
+                e2.fulfill()
+            } else {
+                print("topic:2 -> \(count)")
+            }
+        }
+
+        await Task.sleep(100.milliseconds)
+
+        await reservoir.dispatch(for: "topic:1", 1)
+        await reservoir.dispatch(for: "topic:2", 2)
+        await reservoir.dispatch(for: "topic:1", 3)
+        await reservoir.dispatch(for: "topic:1", 5)
+        reservoir.close(for: "topic:1")
+        reservoir.close(for: "topic:2")
+        wait(for: [e1, e2], timeout: 2)
     }
 
     func testBenchmark() async throws {

@@ -18,17 +18,17 @@ extension Nozzle: AsyncSequence {
     /// Async Iterator for the Nozzle
     public struct Iterator: AsyncIteratorProtocol {
 
-        /// The ``Desolate/Nozzle/Current`` actor itself to pull value
-        private let current: Current
+        /// The ``Desolate/Nozzle/Sink`` actor itself to pull value
+        private let sink: Sink
 
-        fileprivate init(_ actor: Current) {
-            current = actor
+        fileprivate init(_ actor: Sink) {
+            sink = actor
         }
 
         /// Send in the next value from the queue.
         public mutating func next() async -> Element? {
-            while await current.ongoing() {
-                if let next = await current.next() {
+            while await sink.ongoing() {
+                if let next = await sink.next() {
                     return next
                 }
                 await Task.requeue()
