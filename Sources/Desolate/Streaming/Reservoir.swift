@@ -8,47 +8,59 @@
 
 import Foundation
 
-public struct Reservoir<Topic, Element>: Sendable where Topic: Hashable {
+public struct Reservoir<Key, Element>: Sendable where Key: Hashable {
     public typealias Supply = Desolate<Source<Element>.Supply>
 
     public actor Spillway: AbstractDesolate, BaseActor {
         public enum Act {
-            case acquire(topic: Topic, ref: Receiver<Supply>)
-            case dispatch(topic: Topic, Element)
-            case deallocate(topic: Topic)
+            case acquire(key: Key, ref: Receiver<Supply>)
+            case collect(key: Key, ref: Receiver<Nozzle<Element>>)
+            case dispatch(key: Key, Element)
+            case deallocate(key: Key)
         }
 
         public var status: Signal = .running
 
         /// Temporarily storage
-        private var supplies: [Topic: Supply] = [:]
+        private var supplies: [Key: Supply] = [:]
 
         public func onMessage(msg: Act) async -> Signal {
             switch msg {
-            case .acquire(topic: let topic, ref: let ref):
-                let supply = getOrElse(topic, or: Source<Element>.Supply.make)
+            case .acquire(key: let key, ref: let ref):
+                let supply = await getOrElse(key, or: Source<Element>.Supply.make)
                 await ref.task(with: supply)
 
-            case .dispatch(topic: let topic, let element):
-                guard let supply = supplies[topic] else { break }
+            case .collect(key: let key, ref: let ref):
+                let supply = await getOrElse(key, or: Source<Element>.Supply.make)
+
+                let (nozzle, sink) = Nozzle<Element>.desolate()
+                await supply.task(with: .attach(id: nozzle.id, sink: sink))
+                nozzle.onTermination {
+                    supply.tell(with: .detach(id: nozzle.id))
+                }
+
+                await ref.task(with: nozzle)
+
+            case .dispatch(key: let key, let element):
+                guard let supply = supplies[key] else { break }
                 await supply.task(with: .next(element))
 
-            case .deallocate(topic: let topic):
-                guard let supply = supplies[topic] else { break }
+            case .deallocate(key: let key):
+                guard let supply = supplies[key] else { break }
                 await supply.task(with: .complete)
-                supplies.removeValue(forKey: topic)
-            }
+                supplies.removeValue(forKey: key)
 
+            }
             return .running
         }
 
-        private func getOrElse(_ topic: Topic, or other: () -> Supply) -> Supply {
-            if let supply = supplies[topic] {
+        private func getOrElse(_ key: Key, or other: () -> Supply) async -> Supply {
+            if let supply = supplies[key] {
                 return supply
             }
 
             let supply = other()
-            supplies[topic] = supply
+            supplies[key] = supply
             return supply
         }
 
@@ -62,7 +74,7 @@ public struct Reservoir<Topic, Element>: Sendable where Topic: Hashable {
         desolate = engine
     }
 
-    public init() {
+    public init(key _: Key.Type = Key.self, element _: Element.Type = Element.self) {
         desolate = Spillway.make()
     }
 }

@@ -12,6 +12,15 @@ extension Source {
     /// Create a new Source and give back its inner desolate
     ///
     /// ```swift
+    /// let (source, supply) = Source<Int>.desolate()
+    /// Task.init {
+    ///     for await each in source.nozzle() {
+    ///         ...
+    ///     }
+    /// }
+    ///
+    /// supply.tell(with: 1)
+    /// supply.tell(with: 2)
     /// ```
     ///
     /// - Returns: The Source and its inner Supply
