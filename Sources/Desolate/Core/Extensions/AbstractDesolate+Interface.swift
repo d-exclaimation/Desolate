@@ -51,9 +51,4 @@ extension AbstractDesolate {
     public func spawn<ActorType: AbstractDesolate>(_ actor: ActorType) -> Desolate<ActorType> {
         Desolate(of: actor)
     }
-
-    /// Log a custom message into the standard output
-    public func log(_ msg: CustomStringConvertible...) {
-        print("[\(Date().ISO8601Format())]: \(msg.map { $0.description }.joined(separator: " "))")
-    }
 }
