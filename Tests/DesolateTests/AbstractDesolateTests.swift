@@ -42,21 +42,4 @@ final class AbstractDesolateTests: XCTestCase {
             e.fulfill()
         }
     }
-
-    func testConduit() throws {
-        @Sendable func asyncCode() async -> Int { 1 }
-        try unit("Conduit should not create data race and allow bridging the async value to the sync block") { e in
-            let res = conduit(within: 1.0) {
-                await asyncCode()
-            }
-
-            switch res {
-            case .success(let int):
-                XCTAssert(int == 1)
-                e.fulfill()
-            case .failure(_):
-                XCTAssert(false)
-            }
-        }
-    }
 }
