@@ -64,8 +64,32 @@ Task.init {
         // Dynamic multiple consumer, ran parallel using TaskGroup
         for i in 0..<3 {
             group.addTask {
-                // Compute a new Nuzzle for each consumer
+                // Compute a new Nozzle for each consumer
                 for await each in source.nozzle() {
+                    print("\(i): Received \(each)")
+                }    
+            }
+        }
+    }
+}
+supply.tell(with: .next(10))
+// 0: Received 10
+// 2: Received 10
+// 1: Received 10
+```
+
+``Desolate/Source`` is also an [`AsyncSequence`](https://developer.apple.com/documentation/swift/asyncsequence) so you don't need to explicitly call ``Desolate/Source/nozzle()`` to consumer it as it infers a new nozzle for its [`AsyncIterator`](https://developer.apple.com/documentation/swift/asyncsequence/3814563-asynciterator) (unless you need a ``Desolate/Nozzle`` in your code)
+
+```swift
+let (source, supply) = Source<Int>.desolate()
+
+Task.init {
+    await withTaskGroup(of: Void.self) { group in 
+        // Dynamic multiple consumer, ran parallel using TaskGroup
+        for i in 0..<3 {
+            group.addTask {
+                // Compute a new Nozzle for each consumer
+                for await each in source {
                     print("\(i): Received \(each)")
                 }    
             }

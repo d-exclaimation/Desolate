@@ -77,7 +77,7 @@ struct Main {
 }
 ```
 
-There are other ones like ``Desolate/conduit(within:for:)-2cfxo`` which actually give back the Task's success and failure as Result.
+There are other ones like ``Desolate/conduit(within:for:)-40csi`` which actually give back the Task's success and failure as Result.
 
 On top of that, ``Desolate`` provide extentions to [`Task`](https://developer.apple.com/documentation/swift/task/) mostly to get feature parody with something like `Futures` / `Promises` (and Swift-NIO `EventLoopFuture`) and also aliases to describe 2 kind of common Task, ``Desolate/Deferred`` (Task with returned value) and ``Desolate/Job`` (Task with no return value)
 
