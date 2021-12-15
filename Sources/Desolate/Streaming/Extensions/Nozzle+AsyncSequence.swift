@@ -1,5 +1,5 @@
 //
-//  Nozzle+AsynSequence.swift
+//  Nozzle+AsyncSequence.swift
 //  Desolate
 //
 //  Created by d-exclaimation on 6:31 PM.
@@ -33,6 +33,9 @@ extension Nozzle: AsyncSequence {
         /// Send in the next value from the queue.
         public mutating func next() async -> Element? {
             while await sink.ongoing() {
+                guard !Task.isCancelled else {
+                    return nil
+                }
                 if let next = await sink.next() {
                     return next
                 }

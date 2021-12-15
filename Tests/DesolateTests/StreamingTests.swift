@@ -34,6 +34,32 @@ final class StreamingTests: XCTestCase {
             e.fulfill()
         }
     }
+    
+    func testNozzleCancelled() async throws {
+        try await unit("Nozzle should be a cold stream") { e async in
+            let nozzle = Nozzle<Int> { pipe in
+                for i in 0..<10 {
+                    await pipe.emit(i)
+                    try? await Task.sleep(nanoseconds: 10.milliseconds)
+                }
+                await pipe.close()
+            }
+            let task = Task {
+                for await each in nozzle {
+                    print("Actual -> \(each)")
+                }
+            }
+            
+            try? await Task.sleep(nanoseconds: 10.milliseconds)
+            task.cancel()
+            
+            for await remains in nozzle {
+                print("Left -> \(remains)")
+            }
+            
+            e.fulfill()
+        }
+    }
 
     func testSource() async {
         let (stream, desolate) = Source<Int>.desolate()
@@ -61,7 +87,7 @@ final class StreamingTests: XCTestCase {
         }
         let c1 = await job1.value
         let c2 = await job2.value
-        XCTAssertEqual(c1, c2)
+        XCTAssert(c1 == c2 && c1 == 10)
     }
 
     actor Procrastinator: AbstractDesolate, NonStop, BaseActor {
