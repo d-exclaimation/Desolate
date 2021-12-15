@@ -9,10 +9,10 @@
 import Foundation
 
 /// Asynchronous function that always successfully return a value
-public typealias Async<ReturnType> = () async -> ReturnType
+public typealias Async<ReturnType> = @Sendable () async -> ReturnType
 
 /// Asynchronous function that can fail
-public typealias AsyncFailable<ReturnType> = () async throws -> ReturnType
+public typealias AsyncFailable<ReturnType> = @Sendable () async throws -> ReturnType
 
 /// Bridge a async block to a non async one and pass the result
 ///
@@ -23,7 +23,7 @@ public typealias AsyncFailable<ReturnType> = () async throws -> ReturnType
 public func conduit<Success>(within timeout: TimeInterval, for operation: @escaping Async<Success>) -> Result<Success, CollapsedBridge> {
     let capsule = MutexCapsule<Success>()
 
-    func closure() async {
+    @Sendable func closure() async {
         let res = await operation()
         await capsule.task(with: res)
     }
@@ -48,7 +48,7 @@ public func conduit<Success>(within timeout: TimeInterval, for operation: @escap
 public func conduit<Success, Failure: Error>(within timeout: TimeInterval, under operation: @escaping Async<Result<Success, Failure>>) -> Result<Success, CollapsedBridge> {
     let capsule = MutexCapsule<Result<Success, CollapsedBridge>>()
 
-    func closure() async {
+    @Sendable func closure() async {
         switch await operation() {
         case .success(let res):
             await capsule.task(with: .success(res))
@@ -79,7 +79,7 @@ public func conduit<Success, Failure: Error>(within timeout: TimeInterval, under
 public func conduit<Success>(within timeout: TimeInterval, for operation: @escaping AsyncFailable<Success>) -> Result<Success, CollapsedBridge> {
     let capsule = MutexCapsule<Result<Success, CollapsedBridge>>()
 
-    func closure() async throws {
+    @Sendable func closure() async throws {
         do {
             let res = try await operation()
             await capsule.task(with: .success(res))

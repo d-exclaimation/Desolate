@@ -10,14 +10,14 @@ import Foundation
 
 extension Int {
     /// Self seconds into a Nanosecond unit
-    var seconds: Nanoseconds { milliseconds * 1000 }
+    var seconds: UInt64 { milliseconds * 1000 }
 
     /// Self milliseconds into a Nanosecond unit
-    var milliseconds: Nanoseconds { microseconds * 1000 }
+    var milliseconds: UInt64 { microseconds * 1000 }
 
     /// Self microseconds into a Nanosecond unit
-    var microseconds: Nanoseconds { nanoseconds * 1000 }
+    var microseconds: UInt64 { nanoseconds * 1000 }
 
     /// Self nanoseconds into a Nanosecond unit
-    var nanoseconds: Nanoseconds { UInt64(self) }
+    var nanoseconds: UInt64 { UInt64(self) }
 }

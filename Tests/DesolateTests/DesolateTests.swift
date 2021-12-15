@@ -63,7 +63,7 @@ final class DesolateTests: XCTestCase {
             case "decrement":
                 return await .running(state: act.current - 1)
             case "schedule":
-                let some = Task.init { await Task.sleep(10.milliseconds) }
+                let some = Task.init { try await Task.sleep(nanoseconds: 10.milliseconds) }
                 await act.pipeToSelf(some) { _ in "increment" }
                 return .same
             default:

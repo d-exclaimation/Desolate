@@ -37,32 +37,38 @@ final class StreamingTests: XCTestCase {
 
     func testSource() async {
         let (stream, desolate) = Source<Int>.desolate()
-        let job = Task {
-            for await each in stream.nozzle().map({ "Task.init -> \($0)" }) {
-                print(each)
+        let job1: UDeferred<Int> = Task {
+            var res = [String]()
+            for await each in stream.map({ "Task.init -> \($0)" }) {
+                res.append(each)
             }
+            return res.count
         }
-        Task.detached {
-            for await each in stream.nozzle().map({ "Task.detached -> \($0)" }) {
-                print(each)
+        let job2: UDeferred<Int>  = Task {
+            var res = [String]()
+            for await each in stream.map({ "Task.detached -> \($0)" }) {
+                res.append(each)
             }
+            return res.count
         }
 
         Task.detached {
-            await Task.sleep(1.seconds)
+            try await Task.sleep(nanoseconds: 1.seconds)
             for i in 1...10 {
                 await desolate.task(with: .next(i))
             }
             await desolate.task(with: .complete)
         }
-        let _ = await job.result
+        let c1 = await job1.value
+        let c2 = await job2.value
+        XCTAssertEqual(c1, c2)
     }
 
     actor Procrastinator: AbstractDesolate, NonStop, BaseActor {
         func onMessage(msg: (Int, Receiver<Int>)) async -> Signal {
             let (num, ref) = msg
             Task.detached {
-                await Task.sleep(1.seconds)
+                try await Task.sleep(nanoseconds: 1.seconds)
                 await ref.task(with: num)
             }
             return same
@@ -134,7 +140,7 @@ final class StreamingTests: XCTestCase {
             }
         }
 
-        await Task.sleep(100.milliseconds)
+        try await Task.sleep(nanoseconds: 100.milliseconds)
 
         await reservoir.dispatch(for: "topic:1", 1)
         await reservoir.dispatch(for: "topic:2", 2)
@@ -177,7 +183,7 @@ final class StreamingTests: XCTestCase {
             }
         }
 
-        await Task.sleep(100.milliseconds)
+        try await Task.sleep(nanoseconds: 100.milliseconds)
 
         await reservoir.dispatch(for: "topic:1", 1)
         await reservoir.dispatch(for: "topic:2", 2)
@@ -280,14 +286,14 @@ final class StreamingTests: XCTestCase {
         }
 
         Task.init {
-           await Task.sleep(1000 * 1000 * 200)
+            try await Task.sleep(nanoseconds: 1000 * 1000 * 200)
             nozzle.shutdown()
         }
 
         Task.init {
             for i in 0...1000 {
                 await engine.task(with: i)
-                await Task.sleep(1000 * 1000 * 10)
+                try await Task.sleep(nanoseconds: 1000 * 1000 * 10)
             }
         }
 

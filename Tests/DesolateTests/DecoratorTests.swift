@@ -40,11 +40,4 @@ final class DecoratorTests: XCTestCase {
         XCTAssert(curr == 2 || curr == 1)
     }
 
-    func testTimer() throws {
-        try unit("Set timer") { e in
-            setTimeout(delay: 10.milliseconds) {
-                e.fulfill()
-            }
-        }
-    }
 }

@@ -24,6 +24,11 @@ extension Nozzle: AsyncSequence {
         fileprivate init(_ actor: Sink) {
             sink = actor
         }
+        
+        internal init(nozzle: Nozzle<Element>) {
+            sink = nozzle.desolate.innerActor
+        }
+
 
         /// Send in the next value from the queue.
         public mutating func next() async -> Element? {

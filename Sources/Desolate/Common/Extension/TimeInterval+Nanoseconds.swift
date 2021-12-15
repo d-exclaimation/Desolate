@@ -16,5 +16,5 @@ extension TimeInterval {
     public var micros: TimeInterval { millis / 1000 }
 
     /// Time interval to Nanoseconds
-    public var nanoseconds: Nanoseconds { UInt64(self * 1000 * 1000 * 1000) }
+    public var nanoseconds: UInt64 { UInt64(self * 1000 * 1000 * 1000) }
 }

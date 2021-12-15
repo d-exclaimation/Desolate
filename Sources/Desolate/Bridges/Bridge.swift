@@ -9,10 +9,10 @@
 import Foundation
 
 /// Asynchronous function that doesn't return a value
-public typealias AsyncFunction = () async -> Void
+public typealias AsyncFunction = @Sendable () async -> Void
 
 /// Asynchronous function that doesn't return a value but throws an error
-public typealias AsyncThrowFunction = () async throws -> Void
+public typealias AsyncThrowFunction = @Sendable () async throws -> Void
 
 /// Bridge the async blocks with a non async one, allowing async code
 /// to be executed top level

@@ -21,8 +21,8 @@ public enum FunctionDesolate<MessageType, State> {
     /// Functional wrapper around State and Signal
     public typealias FS = FunctionalSignal
 
-    /// Function for message receiver
-    public typealias OnMessage = (Base, MessageType) async -> FunctionalSignal
+    // Functional on message handler
+    public typealias OnMessage = @Sendable (Base, MessageType) async -> FunctionalSignal
 
     /// Base actor functional desolate
     public actor Base: AbstractDesolate {
@@ -59,7 +59,11 @@ public enum FunctionDesolate<MessageType, State> {
     }
 
     /// Create a new Desolate actor functionality
-    public static func of(_ type: MessageType.Type = MessageType.self, initial: State, fn: @escaping OnMessage) -> Desolate<Base> {
+    public static func of(
+        _ type: MessageType.Type = MessageType.self,
+        initial: State,
+        fn: @escaping OnMessage
+    ) -> Desolate<Base> {
         Desolate(of: Base(initialState: initial, fn))
     }
 }
