@@ -7,6 +7,9 @@
 
 A scalable concurrency toolkit for Swift 5.5+
 
+
+> **WARNING**: Deprecated and no longer maintained
+
 [Desolate](https://github.com/d-exclaimation/desolate) is a toolkit for Swift 5.5+ Actors and Concurrency capabilities. The library provide structures to model Swift Actors using [Desolate](https://github.com/d-exclaimation/desolate) that maintains its isolation while allowing both synchronous and asynchronous code to interface with the actors. 
 
 ### Documentation
